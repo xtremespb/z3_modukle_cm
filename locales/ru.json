@@ -33,7 +33,7 @@
     "price": "Стоимость",
     "priceHelpText": "Кроме Legacy",
     "years": "Срок (лет)",
-    "yearsHelpText": "Только Fox и Legacy",
+    "yearsHelpText": "Только Legacy",
     "legacyOnly": "Поля, расположенные ниже, заполняются только для продукта Legacy",
     "creditSum": "Сумма кредита",
     "creditPercentage": "Проценты",

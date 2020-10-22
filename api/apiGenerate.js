@@ -69,7 +69,7 @@ export default () => ({
             const dataZip = new PizZip(templateData);
             const templateDoc = new Docxtemplater();
             templateDoc.loadZip(dataZip);
-            const [dateDD, dateMM, dateYYYY] = req.body.date.split(/\./);
+            const [dateDD, dateMM, dateYYYY] = moment(req.body.date, "DDMMYYYY").format("DD.MM.YYYY").split(/\./);
             const dateStringMM = utils.getRuMonthString(dateMM);
             const years = (req.body.years ? parseInt(req.body.years, 10) : 1) || 1;
             const price = cardId.match(/^fox/) ? parseInt(req.body.price * years, 10) : parseInt(req.body.price, 10);
@@ -248,7 +248,7 @@ export default () => ({
             const accountPassword = `PC${parseInt(cardNumber, 10)}`;
             templateDoc.setData({
                 customerName: req.body.customerName,
-                customerBirthDate: req.body.customerBirthDate,
+                customerBirthDate: moment(req.body.customerBirthDate, "DDMMYYYY").format("DD.MM.YYYY"),
                 customerAddress: req.body.customerAddress,
                 customerPhone: req.body.customerPhone,
                 customerEmail: req.body.customerEmail,

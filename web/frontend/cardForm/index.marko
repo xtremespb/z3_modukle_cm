@@ -14,15 +14,6 @@ $ const common = out.global.common;
 } fields=[
   [
     {
-      id: "cardNumber",
-      type: "text",
-      label: out.global.i18n.t("cardNumber"),
-      wrapCSS: "z3-is-medium",
-      convert: "integer",
-      helpText: `${common.minCardNumber} - ${common.maxCardNumber}`,
-      autoFocus: true
-    },
-    {
       id: "cardType",
       type: "select",
       label: out.global.i18n.t("cardType"),
@@ -31,7 +22,16 @@ $ const common = out.global.common;
       css: "is-fullwidth",
       wrapCSS: "z3-is-medium",
       convert: "integer",
-      mandatory: true
+      mandatory: true,
+      autoFocus: true,
+    },
+    {
+      id: "cardNumber",
+      type: "text",
+      label: out.global.i18n.t("cardNumber"),
+      wrapCSS: "z3-is-medium",
+      convert: "integer",
+      helpText: `${common.minCardNumber} - ${common.maxCardNumber}`,
     },
     {
       id: "room",
@@ -59,7 +59,10 @@ $ const common = out.global.common;
       label: out.global.i18n.t("customerBirthDate"),
       wrapCSS: "z3-is-small",
       helpText: out.global.i18n.t("customerBirthDateHelpText"),
-      mandatory: true
+      mandatory: true,
+      maskOptions: {
+        mask: "00.00.0000"
+      }
     },
     {
       id: "customerPhone",
@@ -75,7 +78,7 @@ $ const common = out.global.common;
       label: out.global.i18n.t("customerEmail"),
       helpText: out.global.i18n.t("customerEmailHelpText"),
       wrapCSS: "z3-is-large",
-      mandatory: false
+      mandatory: true
     },
     {
       id: "customerAddress",
@@ -92,7 +95,10 @@ $ const common = out.global.common;
       label: out.global.i18n.t("date"),
       helpText: out.global.i18n.t("dateHelpText"),
       wrapCSS: "z3-is-small",
-      mandatory: true
+      mandatory: true,
+      maskOptions: {
+        mask: "00.00.0000"
+      }
     },
     {
       id: "price",
@@ -100,7 +106,7 @@ $ const common = out.global.common;
       label: out.global.i18n.t("price"),
       helpText: out.global.i18n.t("priceHelpText"),
       wrapCSS: "z3-is-small",
-      convert: "float",
+      convert: "float"
     },
     {
       id: "years",
@@ -157,7 +163,7 @@ $ const common = out.global.common;
       }
     ]
   }
-] validation=generate progressButtonId="btnGenerate" i18n=out.global.i18n manual=true on-form-submit("onFormSubmit") on-button-click("onButtonClick") on-post-success("onFormPostSuccess")/>
+] validation=generate progressButtonId="btnGenerate" i18n=out.global.i18n manual=true on-form-submit("onFormSubmit") on-button-click("onButtonClick") on-post-success("onFormPostSuccess") on-value-change("onFormValueChange")/>
 <mnotify key=`cardForm_mnotify`/>
 <generateModal key="z3_cm_generateModal" on-confirm-click("onConfirmClick")/>
 <certModal key="z3_cm_certModal"/>

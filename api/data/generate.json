@@ -19,8 +19,8 @@
             },
             "customerBirthDate": {
                 "type": "string",
-                "minLength": 10,
-                "maxLength": 10
+                "minLength": 8,
+                "maxLength": 8
             },
             "customerPhone": {
                 "type": "string",
@@ -39,8 +39,8 @@
             },
             "date": {
                 "type": "string",
-                "minLength": 10,
-                "maxLength": 10
+                "minLength": 8,
+                "maxLength": 8
             },
             "price": {
                 "type": "number"

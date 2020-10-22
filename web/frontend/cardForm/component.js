@@ -16,8 +16,7 @@ module.exports = class {
         const data = dataForm.__default;
         const priceMin = this.holdingData.cards[data.cardType - 1].priceMin || 0;
         const priceMax = this.holdingData.cards[data.cardType - 1].priceMax || 0;
-        const dateArr = data.date.split(/\./);
-        const dateTimestamp = parseInt(new Date(dateArr[2], dateArr[1] - 1, dateArr[0]).getTime() / 1000, 10);
+        const dateTimestamp = new Date(`${data.date[4]}${data.date[5]}${data.date[6]}${data.date[7]}`, parseInt(`${data.date[2]}${data.date[3]}`, 10) - 1, `${data.date[0]}${data.date[1]}`).getTime() / 1000;
         const currentTimestamp = parseInt(new Date().getTime() / 1000, 10);
         const allowedOffset = 5259492; // 2 months in seconds
         if (data.price && data.price !== 0) {
@@ -54,5 +53,15 @@ module.exports = class {
 
     onFormPostSuccess(result) {
         this.certModal.func.setActive(true, result.data.uid);
+    }
+
+    onFormValueChange(obj) {
+        switch (obj.id) {
+        case "cardType":
+            this.cardForm.func.setFieldEnabled("price", obj.label !== "LEGACY");
+            this.cardForm.func.setFieldEnabled("cardNumber", obj.label !== "LEGACY");
+            this.cardForm.func.setFieldMandatory("years", obj.label === "LEGACY");
+            break;
+        }
     }
 };
