@@ -7,8 +7,15 @@
     </header>
     <section class="modal-card-body">
       <div>${out.global.i18n.t("successNotice")}</div>
-      <div clas="mt-2">
-        <a href=`${out.global.routeDownload}?id=${state.id}`>${out.global.i18n.t("downloadCert")}</a>
+      <div class="mt-4">
+        <div>
+          <a href=`${out.global.routeDownload}?id=${state.id}`>${out.global.i18n.t("downloadCert")}</a>
+        </div>
+        <if(state.idAnnex)>
+          <div>
+            <a href=`${out.global.routeDownload}?id=${state.idAnnex}`>${out.global.i18n.t("downloadCertAnnex")}</a>
+          </div>
+        </if>
       </div>
     </section>
     <footer class="modal-card-foot">

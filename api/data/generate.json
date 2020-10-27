@@ -2,12 +2,12 @@
     "root": {
         "type": "object",
         "properties": {
-            "cardNumber": {
-                "type": "integer"
-            },
             "cardType": {
                 "type": "integer",
                 "minimum": 1
+            },
+            "cardNumber": {
+                "type": ["integer", "null"]
             },
             "room": {
                 "type": "integer",
@@ -19,13 +19,13 @@
             },
             "customerBirthDate": {
                 "type": "string",
-                "minLength": 8,
-                "maxLength": 8
+                "minLength": 10,
+                "maxLength": 10
             },
             "customerPhone": {
                 "type": "string",
-                "minLength": 12,
-                "maxLength": 12
+                "minLength": 11,
+                "maxLength": 11
             },
             "customerEmail": {
                 "type": "string",
@@ -39,22 +39,25 @@
             },
             "date": {
                 "type": "string",
-                "minLength": 8,
-                "maxLength": 8
+                "minLength": 10,
+                "maxLength": 10
             },
             "price": {
-                "type": "number"
+                "type": ["number", "null"]
             },
             "years": {
-                "type": "integer"
+                "type": ["integer", "null"]
             },
             "creditSum": {
-                "type": "number"
+                "type": ["number", "null"]
+            },
+            "creditMonths": {
+                "type": ["integer", "null"]
             },
             "creditPercentage": {
-                "type": "number"
+                "type": ["number", "null"]
             }
         },
-        "required": ["cardNumber", "cardType", "room", "customerName", "customerBirthDate", "customerPhone", "customerAddress", "date", "price"]
+        "required": ["cardNumber", "cardType", "room", "customerName", "customerBirthDate", "customerPhone", "customerEmail", "customerAddress", "date", "price"]
     }
 }

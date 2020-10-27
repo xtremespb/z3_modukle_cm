@@ -232,4 +232,26 @@ export default class {
         }
         return txt;
     }
+
+    getRuMonthsString(age) {
+        let txt;
+        let count = age % 100;
+        if (count >= 5 && count <= 20) {
+            txt = "месяцев";
+        } else {
+            count %= 10;
+            if (count === 1) {
+                txt = "месяц";
+            } else if (count >= 2 && count <= 4) {
+                txt = "месяца";
+            } else {
+                txt = "месяцев";
+            }
+        }
+        return txt;
+    }
+
+    formatPhoneNumber(s) {
+        return `+${s[0]} ${s[1]}${s[2]}${s[3]} ${s[4]}${s[5]}${s[6]}-${s[7]}${s[8]}-${s[9]}${s[10]}`;
+    }
 }

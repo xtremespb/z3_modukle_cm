@@ -2,7 +2,8 @@ module.exports = class {
     onCreate(input, out) {
         const state = {
             active: false,
-            id: ""
+            id: "",
+            idAnnex: null
         };
         this.state = state;
         this.func = {
@@ -11,8 +12,9 @@ module.exports = class {
         this.i18n = out.global.i18n;
     }
 
-    setActive(state, id) {
+    setActive(state, id, idAnnex) {
         this.state.id = id;
+        this.state.idAnnex = idAnnex;
         this.state.active = state;
     }
 

@@ -6,15 +6,14 @@ import {
     v4 as uuid
 } from "uuid";
 import moment from "moment";
-import template from "lodash/template";
 import generateData from "./data/generate.json";
 import Auth from "../../../shared/lib/auth";
 import C from "../../../shared/lib/constants";
 import Mailer from "../../../shared/lib/mailer";
 import Utils from "./utils";
+import calc from "./calc";
 
 const utils = new Utils();
-const mailTemplateLegacy = template(fs.readFileSync(`${__dirname}/../mail/modules/cm/legacy.template`));
 
 export default () => ({
     schema: {
@@ -64,32 +63,39 @@ export default () => ({
             }
             const holdingData = cmData.config.holdings[userHolding];
             const cardId = holdingData.cards[req.body.cardType - 1].id;
-            const templatePath = path.resolve(`${__dirname}/../../${req.zoiaConfig.directories.files}/${req.zoiaModulesConfig["cm"].directoryTemplates}/${cardId}.docx`);
-            const templateData = await fs.readFile(templatePath, "binary");
-            const dataZip = new PizZip(templateData);
-            const templateDoc = new Docxtemplater();
-            templateDoc.loadZip(dataZip);
-            const [dateDD, dateMM, dateYYYY] = moment(req.body.date, "DDMMYYYY").format("DD.MM.YYYY").split(/\./);
+            const templateCertPath = path.resolve(`${__dirname}/../../${req.zoiaConfig.directories.files}/${req.zoiaModulesConfig["cm"].directoryTemplates}/${cardId}.docx`);
+            const templateCertData = await fs.readFile(templateCertPath, "binary");
+            const dataCertZip = new PizZip(templateCertData);
+            const templateCertDoc = new Docxtemplater();
+            templateCertDoc.loadZip(dataCertZip);
+            const templateAnnexPath = path.resolve(`${__dirname}/../../${req.zoiaConfig.directories.files}/${req.zoiaModulesConfig["cm"].directoryTemplates}/legacy_annex.docx`);
+            const templateAnnexData = await fs.readFile(templateAnnexPath, "binary");
+            const dataAnnexZip = new PizZip(templateAnnexData);
+            const templateAnnexDoc = new Docxtemplater();
+            templateAnnexDoc.loadZip(dataAnnexZip);
+            const [dateDD, dateMM, dateYYYY] = req.body.date.split(/\./);
             const dateStringMM = utils.getRuMonthString(dateMM);
             const years = (req.body.years ? parseInt(req.body.years, 10) : 1) || 1;
+            const months = (req.body.creditMonths ? parseInt(req.body.creditMonths, 10) : 1) || 1;
             const price = cardId.match(/^fox/) ? parseInt(req.body.price * years, 10) : parseInt(req.body.price, 10);
-            let componentsTotalCost = 0;
-            let componentsOfficeCost = 0;
-            const components = [];
+            let components = [];
+            let componentsOfficeCost;
+            let componentsTotalCost;
+            let rangeIndex = 0;
+            let annexData = {};
             let {
                 cardNumber
             } = req.body;
-            let rangeIndex = 0;
             // Check legacy fields
             if (cardId === "legacy") {
-                if (!req.body.years || req.body.years < 1) {
+                if (!req.body.creditMonths || months < 1) {
                     rep.requestError(rep, {
                         failed: true,
-                        error: "Invalid years value",
-                        errorKeyword: "invalidYears",
+                        error: "Invalid months value",
+                        errorKeyword: "invalidMonths",
                         errorData: [{
-                            keyword: "invalidYears",
-                            dataPath: ".years"
+                            keyword: "invalidMonths",
+                            dataPath: ".creditMonths"
                         }]
                     });
                     return;
@@ -118,52 +124,12 @@ export default () => ({
                     });
                     return;
                 }
-                componentsTotalCost = parseInt((req.body.creditSum / 100) * req.body.creditPercentage * req.body.years, 10);
-                let componentsArray;
-                cmData.config.legacy.ranges.map((range, index) => {
-                    if (!componentsArray && componentsTotalCost > range.from && (!range.to || componentsTotalCost < range.to)) {
-                        componentsArray = range.components;
-                        rangeIndex = index;
-                    }
-                });
-                let selectedComponentsCost = 0;
-                componentsArray.map(c => {
-                    const {
-                        cost,
-                    } = cmData.config.legacy.components[c - 1];
-                    selectedComponentsCost += cost || 0;
-                });
-                let options = 1;
-                if (selectedComponentsCost !== componentsTotalCost) {
-                    if (componentsTotalCost - selectedComponentsCost < 200) {
-                        componentsOfficeCost = componentsTotalCost - selectedComponentsCost;
-                    } else {
-                        options = parseInt((componentsTotalCost - selectedComponentsCost) / 200, 10);
-                        const costDiff = componentsTotalCost - (selectedComponentsCost + (options * 200));
-                        if (costDiff && costDiff < 200) {
-                            componentsOfficeCost = parseInt(costDiff, 10);
-                        }
-                    }
-                }
-                componentsArray.map(c => {
-                    const item = {
-                        title: cmData.config.legacy.components[c - 1].title,
-                        amount: c === 2 ? options + 1 : cmData.config.legacy.components[c - 1].amount,
-                        cost: c === 2 ? cmData.config.legacy.components[c - 1].cost * (options + 1) : cmData.config.legacy.components[c - 1].cost
-                    };
-                    const formula = cmData.config.legacy.components[c - 1].formula || "";
-                    switch (formula) {
-                        // case "office":
-                        //     componentsOfficeCost = componentsTotalCost - selectedComponentsCost;
-                        //     break;
-                    case "guard":
-                        item.cost = componentsTotalCost - selectedComponentsCost;
-                        componentsOfficeCost = 0;
-                    }
-                    if (formula !== "office") {
-                        components.push(item);
-                    }
-                });
+                const calcData = calc.legacy(cmData.config.legacy.ranges, cmData.config.legacy.components, req.body.creditSum, months, req.body.creditPercentage);
+                componentsTotalCost = calcData.productCost;
+                componentsOfficeCost = calcData.office;
+                rangeIndex = calcData.rangeIndex;
+                components = calcData.components;
+                annexData = calcData.annexData;
                 const counterData = await this.mongo.db.collection(req.zoiaConfig.collections.counters).findOneAndUpdate({
                     _id: "cmLegacy"
                 }, {
@@ -246,11 +212,11 @@ export default () => ({
             const usernameRId = cmData.config.holdings[userHolding].roomsId[req.body.room - 1];
             const accountUsername = `L${usernameLetter1}${usernameLetter2}${usernameHId}${usernameRId}${cardNumber}`;
             const accountPassword = `PC${parseInt(cardNumber, 10)}`;
-            templateDoc.setData({
+            templateCertDoc.setData({
                 customerName: req.body.customerName,
-                customerBirthDate: moment(req.body.customerBirthDate, "DDMMYYYY").format("DD.MM.YYYY"),
+                customerBirthDate: req.body.customerBirthDate,
                 customerAddress: req.body.customerAddress,
-                customerPhone: req.body.customerPhone,
+                customerPhone: utils.formatPhoneNumber(String(req.body.customerPhone)),
                 customerEmail: req.body.customerEmail,
                 cardNumber,
                 day: dateDD,
@@ -262,16 +228,18 @@ export default () => ({
                 price475: utils.rubles(((47.5 / 100) * price).toFixed(2)),
                 price95: utils.rubles(((95 / 100) * price).toFixed(2)),
                 price5: utils.rubles(((5 / 100) * price).toFixed(2)),
-                years: req.body.years,
+                years,
+                months,
                 yearsString: utils.getRuAgeString(years),
+                monthsString: utils.getRuMonthsString(months),
                 componentsTotalCost,
                 components,
                 componentsOfficeCost,
                 accountUsername,
                 accountPassword,
             });
-            templateDoc.render();
-            const templateBuf = templateDoc.getZip().generate({
+            templateCertDoc.render();
+            const templateBuf = templateCertDoc.getZip().generate({
                 type: "nodebuffer"
             });
             const tempFilePath = path.resolve(`${__dirname}/../../${req.zoiaConfig.directories.tmp}/${uuid()}.docx`);
@@ -307,23 +275,68 @@ export default () => ({
             }, {
                 upsert: true
             });
+            let uidAnnex;
+            if (Object.keys(annexData).length && cardId === "legacy") {
+                templateAnnexDoc.setData(annexData);
+                templateAnnexDoc.render();
+                const templateAnnexBuf = templateAnnexDoc.getZip().generate({
+                    type: "nodebuffer"
+                });
+                const tempAnnexFilePath = path.resolve(`${__dirname}/../../${req.zoiaConfig.directories.tmp}/${uuid()}.docx`);
+                await fs.writeFile(tempAnnexFilePath, templateAnnexBuf);
+                const convertAnnexResult = await utils.convertDocxToPDF(tempAnnexFilePath, path.resolve(`${__dirname}/../../${req.zoiaConfig.directories.tmp}`));
+                await fs.remove(tempAnnexFilePath);
+                if (!convertAnnexResult) {
+                    rep.requestError(rep, {
+                        failed: true,
+                        error: "Could not convert file to PDF",
+                        errorKeyword: "couldNotConvert",
+                        errorData: []
+                    });
+                    return;
+                }
+                uidAnnex = uuid();
+                const saveAnnexFilename = path.resolve(`${__dirname}/../../${req.zoiaConfig.directories.files}/${req.zoiaModulesConfig["cm"].directoryFiles}/${uidAnnex}`);
+                const statsAnnex = await fs.lstat(convertAnnexResult);
+                await fs.move(convertAnnexResult, saveAnnexFilename);
+                await this.mongo.db.collection(req.zoiaModulesConfig["cm"].collectionCmFiles).updateOne({
+                    _id: uidAnnex
+                }, {
+                    $set: {
+                        name: `${userHolding}_${cardId}_${moment().format("DDMMYYYY_HHmm")}_annex.pdf`,
+                        size: statsAnnex.size,
+                        date: new Date(),
+                        cardNumber,
+                        customerName: req.body.customerName,
+                        holding: userHolding,
+                        cardType: `${cardId} (приложение)`,
+                        username: auth.getUser()._id
+                    }
+                }, {
+                    upsert: true
+                });
+            }
             if (req.body.customerEmail && cardId === "legacy") {
-                const mailer = new Mailer(this);
+                const mailer = new Mailer(this, "ru");
                 mailer.setRecepient(req.body.customerEmail);
                 mailer.setSubject("Legacy");
-                mailer.setHTML(this.mailTemplate({
-                    subject: "Legacy",
-                    preheader: "Ваш сертификат Legacy",
-                    content: mailTemplateLegacy({
-                        accountUsername,
-                        accountPassword
-                    })
-                }));
-                await mailer.send();
+                mailer.setPreheader("Ваш сертификат Legacy");
+                // HTML
+                mailer.setHTML(`
+                ${this.mailTemplateComponentsHTML["paragraph"]({ text: "Благодарим вас за приобретение комплекса Legacy." })}
+                ${this.mailTemplateComponentsHTML["paragraph"]({ text: "Вам доступны огромное количество юридических услуг и других компонентов Legacy. Подробнее обо всем этом вы можете узнать и воспользоваться ими на <a href=\"https://legacycard.ru\">legacycard.ru</a>." })}
+                ${this.mailTemplateComponentsHTML["paragraph"]({ text: `<strong>Имя пользователя:</strong>&nbsp;${accountUsername}<br><strong>Пароль:</strong>&nbsp;${accountPassword}` })}
+                ${this.mailTemplateComponentsHTML["paragraph"]({ text: "" })}
+                `);
+                // Text
+                mailer.setText(`${this.mailTemplateComponentsText["paragraph"]({ text: "Благодарим вас за приобретение комплекса Legacy." })}${this.mailTemplateComponentsText["paragraph"]({ text: "Вам доступны огромное количество юридических услуг и других компонентов Legacy. Подробнее обо всем этом вы можете узнать и воспользоваться ими на https://legacycard.ru." })}${this.mailTemplateComponentsText["paragraph"]({ text: `Имя пользователя: ${accountUsername}\nПароль: ${accountPassword}` })}`, false);
+                mailer.addLogo();
+                mailer.sendMail();
             }
             // Send result
             rep.successJSON(rep, {
-                uid
+                uid,
+                uidAnnex
             });
             return;
         } catch (e) {

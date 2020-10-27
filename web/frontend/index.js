@@ -17,7 +17,11 @@ export default () => ({
             })) || {
                 config: {
                     commom: {},
-                    holdings: {}
+                    holdings: {},
+                    legacy: {
+                        components: [],
+                        ranges: []
+                    }
                 }
             };
             let userHolding;
@@ -39,6 +43,7 @@ export default () => ({
                         userHolding: true,
                         userHoldingData: true,
                         routeDownload: true,
+                        legacy: true,
                         ...site.getSerializedGlobals()
                     },
                     template: req.zoiaTemplates.available[0],
@@ -47,6 +52,7 @@ export default () => ({
                     userHolding,
                     userHoldingData,
                     routeDownload: req.zoiaModulesConfig["cm"].routes.download,
+                    legacy: cmData.config.legacy,
                     ...await site.getGlobals(),
                 }
             });

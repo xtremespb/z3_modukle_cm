@@ -1,5 +1,13 @@
+const calc = require("../../../api/calc");
+
 module.exports = class {
     onCreate(input, out) {
+        const state = {
+            title: null,
+            legacy: out.global.legacy,
+            calcLegacy: null
+        };
+        this.state = state;
         this.holdingData = out.global.userHoldingData;
         this.i18n = out.global.i18n;
     }
@@ -16,7 +24,7 @@ module.exports = class {
         const data = dataForm.__default;
         const priceMin = this.holdingData.cards[data.cardType - 1].priceMin || 0;
         const priceMax = this.holdingData.cards[data.cardType - 1].priceMax || 0;
-        const dateTimestamp = new Date(`${data.date[4]}${data.date[5]}${data.date[6]}${data.date[7]}`, parseInt(`${data.date[2]}${data.date[3]}`, 10) - 1, `${data.date[0]}${data.date[1]}`).getTime() / 1000;
+        const dateTimestamp = new Date(`${data.date[6]}${data.date[7]}${data.date[8]}${data.date[9]}`, parseInt(`${data.date[3]}${data.date[4]}`, 10) - 1, `${data.date[0]}${data.date[1]}`).getTime() / 1000;
         const currentTimestamp = parseInt(new Date().getTime() / 1000, 10);
         const allowedOffset = 5259492; // 2 months in seconds
         if (data.price && data.price !== 0) {
@@ -46,22 +54,58 @@ module.exports = class {
         switch (data.id) {
         case "btnReset":
             this.cardForm.func.resetData();
+            this.state.calcLegacy = null;
             setTimeout(() => this.cardForm.func.autoFocus(), 1);
+            break;
+        case "btnPrintOffer":
+            const win = window.open("/files/offer.pdf", "_blank");
+            win.focus();
+            win.print();
             break;
         }
     }
 
     onFormPostSuccess(result) {
-        this.certModal.func.setActive(true, result.data.uid);
+        this.certModal.func.setActive(true, result.data.uid, result.data.uidAnnex);
     }
 
     onFormValueChange(obj) {
         switch (obj.id) {
         case "cardType":
-            this.cardForm.func.setFieldEnabled("price", obj.label !== "LEGACY");
-            this.cardForm.func.setFieldEnabled("cardNumber", obj.label !== "LEGACY");
-            this.cardForm.func.setFieldMandatory("years", obj.label === "LEGACY");
+            this.cardForm.func.setFieldVisible("price", obj.label !== "LEGACY");
+            this.cardForm.func.setFieldVisible("cardNumber", obj.label !== "LEGACY");
+            this.cardForm.func.setFieldMandatory("creditMonths", obj.label === "LEGACY");
+            this.cardForm.func.setFieldMandatory("cardNumber", obj.label !== "LEGACY");
+            this.cardForm.func.setFieldMandatory("price", obj.label !== "LEGACY");
+            this.cardForm.func.setFieldMandatory("years", obj.label.match(/FOX/));
+            this.cardForm.func.setFieldVisible("years", obj.label.match(/FOX/));
+            this.cardForm.func.setFieldVisible("creditSum", obj.label === "LEGACY");
+            this.cardForm.func.setFieldVisible("creditMonths", obj.label === "LEGACY");
+            this.cardForm.func.setFieldVisible("creditPercentage", obj.label === "LEGACY");
+            this.currentCardLabel = obj.label;
+            break;
+        case "room":
+            this.setState("title", parseInt(obj.value, 10) ? obj.label : null);
             break;
         }
+        if (this.currentCardLabel === "LEGACY" && this.cardForm.func.getValue("creditSum") && this.cardForm.func.getValue("creditMonths") && this.cardForm.func.getValue("creditPercentage")) {
+            const creditSum = this.cardForm.func.getValue("creditSum");
+            const creditMonths = this.cardForm.func.getValue("creditMonths");
+            const creditPercentage = this.cardForm.func.getValue("creditPercentage");
+            const data = calc.legacy(this.state.legacy.ranges, this.state.legacy.components, creditSum, creditMonths, creditPercentage);
+            this.state.calcLegacy = data;
+        } else {
+            this.state.calcLegacy = null;
+        }
+    }
+
+    onFormSettled() {
+        this.cardForm.func.setFieldMandatory("creditMonths", false);
+        this.cardForm.func.setFieldMandatory("cardNumber", true);
+        this.cardForm.func.setFieldMandatory("price", true);
+        this.cardForm.func.setFieldVisible("years", false);
+        this.cardForm.func.setFieldVisible("creditSum", false);
+        this.cardForm.func.setFieldVisible("creditMonths", false);
+        this.cardForm.func.setFieldVisible("creditPercentage", false);
     }
 };
