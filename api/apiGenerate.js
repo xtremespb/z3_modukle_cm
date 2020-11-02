@@ -80,6 +80,8 @@ export default () => ({
             const years = (req.body.years ? parseInt(req.body.years, 10) : 1) || 1;
             const months = (req.body.creditMonths ? parseInt(req.body.creditMonths, 10) : 1) || 1;
             const price = cardId.match(/^fox/) ? parseInt(req.body.price * years, 10) : parseInt(req.body.price, 10);
+            // TODO: this should be replaced by internal module improvements
+            const serviceCodeAutoSchool = Math.random().toString(36).slice(-8);
             let components = [];
             let componentsOfficeCost;
             let componentsTotalCost;
@@ -239,6 +241,7 @@ export default () => ({
                 componentsOfficeCost,
                 accountUsername,
                 accountPassword,
+                serviceCodeAutoSchool
             });
             templateCertDoc.render();
             const templateBuf = templateCertDoc.getZip().generate({
