@@ -12,8 +12,10 @@ import C from "../../../shared/lib/constants";
 import Mailer from "../../../shared/lib/mailer";
 import Utils from "./utils";
 import calc from "./calc";
+import Cyr from "./cyr";
 
 const utils = new Utils();
+const cyr = new Cyr();
 
 export default () => ({
     schema: {
@@ -74,7 +76,7 @@ export default () => ({
             const templateAnnexDoc = new Docxtemplater();
             templateAnnexDoc.loadZip(dataAnnexZip);
             const [dateDD, dateMM, dateYYYY] = req.body.date.split(/\./);
-            const dateStringMM = utils.getRuMonthString(dateMM);
+            const dateStringMM = cyr.getRuMonthString(dateMM);
             const years = (req.body.years ? parseInt(req.body.years, 10) : 1) || 1;
             const months = (req.body.creditMonths ? parseInt(req.body.creditMonths, 10) : 1) || 1;
             const price = cardId.match(/^fox/) ? parseInt(req.body.price * years, 10) : parseInt(req.body.price, 10);
@@ -216,7 +218,7 @@ export default () => ({
                 customerName: req.body.customerName,
                 customerBirthDate: req.body.customerBirthDate,
                 customerAddress: req.body.customerAddress,
-                customerPhone: utils.formatPhoneNumber(String(req.body.customerPhone)),
+                customerPhone: cyr.formatPhoneNumber(String(req.body.customerPhone)),
                 customerEmail: req.body.customerEmail,
                 cardNumber,
                 day: dateDD,
@@ -224,14 +226,14 @@ export default () => ({
                 year: dateYYYY,
                 dateStringMM,
                 yearYY: `${dateYYYY[2]}${dateYYYY[3]}`,
-                price: utils.rubles(req.body.price),
-                price475: utils.rubles(((47.5 / 100) * price).toFixed(2)),
-                price95: utils.rubles(((95 / 100) * price).toFixed(2)),
-                price5: utils.rubles(((5 / 100) * price).toFixed(2)),
+                price: cyr.rubles(req.body.price),
+                price475: cyr.rubles(((47.5 / 100) * price).toFixed(2)),
+                price95: cyr.rubles(((95 / 100) * price).toFixed(2)),
+                price5: cyr.rubles(((5 / 100) * price).toFixed(2)),
                 years,
                 months,
-                yearsString: utils.getRuAgeString(years),
-                monthsString: utils.getRuMonthsString(months),
+                yearsString: cyr.getRuAgeString(years),
+                monthsString: cyr.getRuMonthsString(months),
                 componentsTotalCost,
                 components,
                 componentsOfficeCost,

@@ -55,6 +55,7 @@ module.exports = class {
         case "btnReset":
             this.cardForm.func.resetData();
             this.state.calcLegacy = null;
+            this.state.title = null;
             setTimeout(() => this.cardForm.func.autoFocus(), 1);
             break;
         case "btnPrintOffer":

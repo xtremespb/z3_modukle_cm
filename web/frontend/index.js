@@ -46,7 +46,7 @@ export default () => ({
                         legacy: true,
                         ...site.getSerializedGlobals()
                     },
-                    template: req.zoiaTemplates.available[0],
+                    template: req.zoiaTemplates[0],
                     pageTitle: site.i18n.t("frontend"),
                     common: cmData.config.common && cmData.config && cmData.config.common ? cmData.config.common : {},
                     userHolding,

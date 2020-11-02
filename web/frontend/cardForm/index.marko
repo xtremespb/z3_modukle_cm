@@ -38,7 +38,8 @@ $ const common = out.global.common;
         helpText: `${common.minCardNumber} - ${common.maxCardNumber}`,
         maskOptions: {
           mask: /^[0-9]+$/i
-        }
+        },
+        emptyNull: true
       },
       {
         id: "room",
@@ -177,7 +178,8 @@ $ const common = out.global.common;
           min: 0,
           max: 999,
           lazy: true
-        }
+        },
+        emptyNull: true
       },
       {
         id: "creditPercentage",
