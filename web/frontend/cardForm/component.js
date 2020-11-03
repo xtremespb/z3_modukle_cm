@@ -56,6 +56,16 @@ module.exports = class {
             this.cardForm.func.resetData();
             this.state.calcLegacy = null;
             this.state.title = null;
+            this.cardForm.func.setFieldVisible("price", true);
+            this.cardForm.func.setFieldVisible("cardNumber", true);
+            this.cardForm.func.setFieldMandatory("creditMonths", false);
+            this.cardForm.func.setFieldMandatory("cardNumber", true);
+            this.cardForm.func.setFieldMandatory("price", true);
+            this.cardForm.func.setFieldMandatory("years", false);
+            this.cardForm.func.setFieldVisible("years", false);
+            this.cardForm.func.setFieldVisible("creditSum", false);
+            this.cardForm.func.setFieldVisible("creditMonths", false);
+            this.cardForm.func.setFieldVisible("creditPercentage", false);
             setTimeout(() => this.cardForm.func.autoFocus(), 1);
             break;
         case "btnPrintOffer":

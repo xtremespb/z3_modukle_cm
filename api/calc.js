@@ -3,8 +3,8 @@ module.exports = {
         const creditSum = parseFloat(sum);
         const creditMonths = parseFloat(months);
         const creditPercentage = parseFloat(percentage);
-        const productCost = parseInt((creditSum * creditMonths * (creditPercentage / 100)) / 12, 10);
-        const annexData = {};
+        let productCost = parseInt((creditSum * creditMonths * (creditPercentage / 100)) / 12, 10);
+        let annexData = {};
         let componentsArray;
         let rangeIndex;
         rangesData.map((range, index) => {
@@ -13,6 +13,7 @@ module.exports = {
                 rangeIndex = index;
             }
         });
+        componentsArray = componentsArray || [];
         let selectedComponentsCost = 0;
         componentsArray.map(c => {
             const {
@@ -22,7 +23,7 @@ module.exports = {
         });
         let options = 1;
         let office = 0;
-        if (selectedComponentsCost !== productCost) {
+        if (productCost > selectedComponentsCost) {
             if (productCost - selectedComponentsCost < 200) {
                 office = productCost - selectedComponentsCost;
             } else {
@@ -33,7 +34,7 @@ module.exports = {
                 }
             }
         }
-        const components = [];
+        let components = [];
         componentsArray.map(c => {
             annexData[`c${c}`] = true;
             const item = {
@@ -51,6 +52,12 @@ module.exports = {
                 components.push(item);
             }
         });
+        if (rangeIndex === 0 && selectedComponentsCost > productCost) {
+            productCost = 0;
+            components = [];
+            office = 0;
+            annexData = {};
+        }
         return {
             productCost,
             components,

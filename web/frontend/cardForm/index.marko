@@ -8,7 +8,7 @@ $ const common = out.global.common;
 <if(state.title)>
   <h1 class="title">${state.title}</h1>
 </if>
-<div class="box">
+<div class="box mb-0">
   <mform key="z3_cm_cardForm" id="cardForm" save={
     url: "/api/cm/card/generate",
     extras: {},
@@ -226,40 +226,45 @@ $ const common = out.global.common;
   ] validation=generate progressButtonId="btnGenerate" i18n=out.global.i18n manual=true on-form-submit("onFormSubmit") on-button-click("onButtonClick") on-post-success("onFormPostSuccess") on-value-change("onFormValueChange") on-all-settled("onFormSettled")/>
 </div>
 <if(state.calcLegacy)>
-  <div class="box mt-5">
-    <div class="table-container">
-      <table class="table is-striped is-narrow is-hoverable is-fullwidth">
-        <thead>
-          <tr>
-            <th>${out.global.i18n.t("title")}</th>
-            <th class="has-text-centered">${out.global.i18n.t("amount")}</th>
-            <th class="has-text-centered">${out.global.i18n.t("cost")}</th>
-          </tr>
-        </thead>
-        <tfoot>
-          <tr>
-            <th>${out.global.i18n.t("total")}</th>
-            <th>&nbsp;</th>
-            <th class="has-text-centered">${state.calcLegacy.productCost} ₽</th>
-          </tr>
-        </tfoot>
-        <tbody>
-          <for|item| of=state.calcLegacy.components>
+  <if(state.calcLegacy.productCost)>
+    <div class="box mt-2">
+      <div class="table-container">
+        <table class="table is-striped is-narrow is-hoverable is-fullwidth">
+          <thead>
             <tr>
-              <td>${item.title}</td>
-              <td class="has-text-centered">${item.amount}</td>
-              <td class="has-text-centered">${item.cost} ₽</td>
+              <th>${out.global.i18n.t("title")}</th>
+              <th class="has-text-centered">${out.global.i18n.t("amount")}</th>
+              <th class="has-text-centered">${out.global.i18n.t("cost")}</th>
             </tr>
-          </for>
-          <tr>
-            <td>${out.global.i18n.t("office")}</td>
-            <td>&nbsp;</td>
-            <td class="has-text-centered">${state.calcLegacy.office} ₽</td>
-          </tr>
-        </tbody>
-      </table>
+          </thead>
+          <tfoot>
+            <tr>
+              <th>${out.global.i18n.t("total")}</th>
+              <th>&nbsp;</th>
+              <th class="has-text-centered">${state.calcLegacy.productCost} ₽</th>
+            </tr>
+          </tfoot>
+          <tbody>
+            <for|item| of=state.calcLegacy.components>
+              <tr>
+                <td>${item.title}</td>
+                <td class="has-text-centered">${item.amount}</td>
+                <td class="has-text-centered">${item.cost} ₽</td>
+              </tr>
+            </for>
+            <tr>
+              <td>${out.global.i18n.t("office")}</td>
+              <td>&nbsp;</td>
+              <td class="has-text-centered">${state.calcLegacy.office} ₽</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
+  </if>
+  <else>
+    <div class="notification is-warning mt-2">${out.global.i18n.t("lowProductCost")}</div>
+  </else>
 </if>
 <mnotify key=`cardForm_mnotify`/>
 <generateModal key="z3_cm_generateModal" on-confirm-click("onConfirmClick")/>
