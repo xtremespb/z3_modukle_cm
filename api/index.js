@@ -3,6 +3,9 @@ import apiConfigLoad from "./apiConfigLoad";
 import apiGenerate from "./apiGenerate";
 import apiFilesList from "./apiFilesList";
 import apiFilesDelete from "./apiFilesDelete";
+import apiCodesList from "./apiCodesList";
+import apiCodesDelete from "./apiCodesDelete";
+import apiImportCodes from "./apiImportCodes";
 
 export default fastify => {
     fastify.post("/api/cm/config/save", apiConfigSave());
@@ -10,4 +13,7 @@ export default fastify => {
     fastify.post("/api/cm/card/generate", apiGenerate());
     fastify.post("/api/cm/files/list", apiFilesList());
     fastify.post("/api/cm/files/delete", apiFilesDelete());
+    fastify.post("/api/cm/codes/list", apiCodesList());
+    fastify.post("/api/cm/codes/delete", apiCodesDelete());
+    fastify.post("/api/cm/codes/import", apiImportCodes());
 };

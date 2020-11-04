@@ -1,10 +1,15 @@
 {
     "collectionCmFiles": "cmFiles",
+    "collectionCmCodes": "cmCodes",
     "database": {
         "collections": {
             "cmFiles": {
                 "indexesAsc": ["name", "name"],
                 "indexesDesc": ["date", "date"]
+            },
+            "cmCodes": {
+                "indexesAsc": ["code", "codeType"],
+                "indexesDesc": ["code", "codeType"]
             }
         }
     }, 

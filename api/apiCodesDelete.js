@@ -1,12 +1,13 @@
-import path from "path";
-import fs from "fs-extra";
-import filesDelete from "./data/filesDelete.json";
+import {
+    ObjectId
+} from "mongodb";
+import codesDelete from "./data/codesDelete.json";
 import Auth from "../../../shared/lib/auth";
 import C from "../../../shared/lib/constants";
 
 export default () => ({
     schema: {
-        body: filesDelete.root
+        body: codesDelete.root
     },
     attachValidation: true,
     async handler(req, rep) {
@@ -26,21 +27,10 @@ export default () => ({
             // Build query
             const query = {
                 $or: req.body.ids.map(id => ({
-                    _id: id
+                    _id: new ObjectId(id)
                 }))
             };
-            // Get list of records
-            const files = await this.mongo.db.collection(req.zoiaModulesConfig["cm"].collectionCmFiles).find(query).toArray();
-            await Promise.allSettled(files.map(async b => {
-                try {
-                    const file = path.resolve(`${__dirname}/../../${req.zoiaConfig.directories.files}/${req.zoiaModulesConfig["cm"].directoryFiles}/${b._id}`);
-                    await fs.remove(file);
-                } catch {
-                    // Ignore
-                }
-            }));
-            // Delete requested IDs
-            const result = await this.mongo.db.collection(req.zoiaModulesConfig["cm"].collectionCmFiles).deleteMany(query);
+            const result = await this.mongo.db.collection(req.zoiaModulesConfig["cm"].collectionCmCodes).deleteMany(query);
             // Check result
             if (!result || !result.result || !result.result.ok) {
                 rep.requestError(rep, {

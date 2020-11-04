@@ -1,0 +1,14 @@
+{
+    "root": {
+        "type": "object",
+        "properties": {
+            "codeType": {
+                "type": "string"
+            },
+            "codes": {
+                "type": "string"
+            }
+        },
+        "required": ["codeType", "codes"]
+    }
+}

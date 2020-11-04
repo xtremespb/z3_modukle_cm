@@ -11,40 +11,23 @@ module.exports = class {
         this.cookieOptions = out.global.cookieOptions;
         this.siteOptions = out.global.siteOptions;
         this.i18n = out.global.i18n;
-        this.routeDownload = out.global.routeDownload;
     }
 
     onMount() {
-        this.state.processValue = (id, value, column) => {
-            switch (column) {
-            case "date":
-                return `${new Date(value).toLocaleDateString()} ${new Date(value).toLocaleTimeString()}`;
-            case "cardType":
-                return value.toUpperCase();
-            default:
-                return value;
-            }
-        };
+        this.state.processValue = (id, value) => value;
         const cookies = new Cookies(this.cookieOptions);
         this.token = cookies.get(`${this.siteOptions.id || "zoia3"}.authToken`);
-        this.notify = this.getComponent("cmList_mnotify");
-    }
-
-    onActionClick(data) {
-        switch (data.action) {
-        case "btnDownload":
-            window.open(
-                `${this.routeDownload}?id=${data.id}`,
-                "_blank"
-            );
-            break;
-        }
+        this.notify = this.getComponent("cmCodes_mnotify");
+        this.importModal = this.getComponent("cmCodes_importModal");
     }
 
     onTopButtonClick(data) {
         switch (data.button) {
         case "btnReload":
-            this.getComponent("cmTable").func.dataRequest();
+            this.getComponent("cmCodesTable").func.dataRequest();
+            break;
+        case "btnImportCodes":
+            this.importModal.func.setActive(true);
             break;
         }
     }
