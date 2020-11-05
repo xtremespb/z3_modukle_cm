@@ -20,6 +20,11 @@ module.exports = class {
             return;
         }
         this.state.active = state;
+        this.codesImportForm.func.resetData();
+        this.codesImportForm.func.setAceValue("codes", "");
+        if (state) {
+            setTimeout(() => this.codesImportForm.func.autoFocus(), 150);
+        }
     }
 
     onCloseClick() {

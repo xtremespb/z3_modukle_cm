@@ -9,7 +9,7 @@
             },
             "sortId": {
                 "type": "string",
-                "enum": ["code", "codeType"]
+                "enum": ["code", "codeType", "importDate"]
             },
             "sortDirection": {
                 "type": "string",
@@ -30,12 +30,9 @@
     },
     "projection": {
         "_id": 1,
-        "name": 1,
-        "date": 1,
-        "cardNumber": 1,
-        "cardType": 1,
-        "customerName": 1,
-        "holding": 1
+        "code": 1,
+        "codeType": 1,
+        "importDate": 1
     },
     "search": ["code", "codeType"]
 }

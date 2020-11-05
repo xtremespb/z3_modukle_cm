@@ -35,4 +35,9 @@ module.exports = class {
     onUnauthorized() {
         window.location.href = this.i18n.getLocalizedURL(`${this.routes.login}?_=${new Date().getTime()}`, this.language);
     }
+
+    onImportSuccess(count) {
+        this.getComponent("cmCodesTable").func.dataRequest();
+        this.notify.func.show(`${this.i18n.t("codesImported")}: ${count || "0"}`, "is-success");
+    }
 };

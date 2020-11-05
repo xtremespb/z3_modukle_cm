@@ -75,5 +75,9 @@
     "codeType": "Тип кода",
     "importCodes": "Импорт",
     "codes": "Коды",
-    "codesHelpText": "В каждой строчке должен располагаться новый код"
+    "codesHelpText": "В каждой строчке должен располагаться новый код",
+    "importDate": "Дата",
+    "mFormErr.invalidCodeType": "Неверный тип кода",
+    "mFormErr.duplicateCodes": "Один или несколько кодов уже заведены в системе",
+    "codesImported": "Импортировано кодов"
 }

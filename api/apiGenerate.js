@@ -80,8 +80,6 @@ export default () => ({
             const years = (req.body.years ? parseInt(req.body.years, 10) : 1) || 1;
             const months = (req.body.creditMonths ? parseInt(req.body.creditMonths, 10) : 1) || 1;
             const price = cardId.match(/^fox/) ? parseInt(req.body.price * years, 10) : parseInt(req.body.price, 10);
-            // TODO: this should be replaced by internal module improvements
-            const serviceCodeAutoSchool = Math.random().toString(36).slice(-8);
             let components = [];
             let componentsOfficeCost;
             let componentsTotalCost;
@@ -216,6 +214,17 @@ export default () => ({
             const usernameRId = cmData.config.holdings[userHolding].roomsId[req.body.room - 1];
             const accountUsername = `L${usernameLetter1}${usernameLetter2}${usernameHId}${usernameRId}${cardNumber}`;
             const accountPassword = `PC${parseInt(cardNumber, 10)}`;
+            let serviceCodeAutoSchool = "—";
+            if (cmData.config.legacy.ranges[rangeIndex].components.indexOf(6) > -1) {
+                const codeRecordDrivingSchool = await this.mongo.db.collection(req.zoiaModulesConfig["cm"].collectionCmCodes).findOneAndDelete({
+                    codeType: "drivingSchool"
+                }, {
+                    sort: {
+                        importDate: -1
+                    }
+                });
+                serviceCodeAutoSchool = codeRecordDrivingSchool && codeRecordDrivingSchool.value && codeRecordDrivingSchool.value.code ? codeRecordDrivingSchool.value.code : Math.random().toString(36).slice(-8);
+            }
             templateCertDoc.setData({
                 customerName: req.body.customerName,
                 customerBirthDate: req.body.customerBirthDate,

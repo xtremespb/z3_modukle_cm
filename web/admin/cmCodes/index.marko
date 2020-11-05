@@ -13,7 +13,7 @@ $ const token = cookies.get(`${out.global.siteOptions.id || "zoia3"}.authToken`)
   headers: {
     Authorization: `Bearer ${token}`
   }
-} id="cm" key="cmCodesTable" columns=[
+} id="cmCodesTable" key="cmCodesTable" columns=[
   {
     id: "code",
     title: out.global.i18n.t("code"),
@@ -24,6 +24,12 @@ $ const token = cookies.get(`${out.global.siteOptions.id || "zoia3"}.authToken`)
     id: "codeType",
     title: out.global.i18n.t("codeType"),
     css: "z3-ap-cm-list-codeType",
+    sortable: true
+  },
+  {
+    id: "importDate",
+    title: out.global.i18n.t("importDate"),
+    css: "z3-ap-cm-list-importDate",
     sortable: true
   }
 ] actions=[
@@ -60,8 +66,8 @@ $ const token = cookies.get(`${out.global.siteOptions.id || "zoia3"}.authToken`)
     displayText: true,
     tooltip: false
   }
-] actionsTitle=out.global.i18n.t("actions") processValue=state.processValue sortId="date" sortDirection="desc" checkboxColumn=true on-top-button-click("onTopButtonClick") i18n=out.global.i18n genericDelete={
-  title: "name",
+] actionsTitle=out.global.i18n.t("actions") processValue=state.processValue sortId="importDate" sortDirection="desc" checkboxColumn=true on-top-button-click("onTopButtonClick") i18n=out.global.i18n genericDelete={
+  title: "code",
   source: {
     method: "post",
     url: "/api/cm/codes/delete",
@@ -72,4 +78,4 @@ $ const token = cookies.get(`${out.global.siteOptions.id || "zoia3"}.authToken`)
   }
 } on-unauthorized("onUnauthorized") autoItemsPerPage=true/>
 <mnotify key=`cmCodes_mnotify`/>
-<importModal key="cmCodes_importModal"/>
+<importModal key="cmCodes_importModal" on-import-success("onImportSuccess")/>
