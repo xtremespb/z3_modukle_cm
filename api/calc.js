@@ -1,4 +1,8 @@
-module.exports = {
+import Cyr from "./cyr";
+
+const cyr = new Cyr();
+
+export default {
     legacy: (rangesData, componentsData, sum, months, percentage) => {
         const creditSum = parseFloat(sum);
         const creditMonths = parseFloat(months);
@@ -30,7 +34,7 @@ module.exports = {
                 options = parseInt((productCost - selectedComponentsCost) / 200, 10);
                 const costDiff = productCost - (selectedComponentsCost + (options * 200));
                 if (costDiff && costDiff < 200) {
-                    office = parseInt(costDiff, 10);
+                    office = cyr.formatMoney(parseInt(costDiff, 10), 2);
                 }
             }
         }
@@ -40,12 +44,12 @@ module.exports = {
             const item = {
                 title: componentsData[c - 1].title,
                 amount: c === 2 ? options + 1 : componentsData[c - 1].amount,
-                cost: c === 2 ? componentsData[c - 1].cost * (options + 1) : componentsData[c - 1].cost
+                cost: cyr.formatMoney(c === 2 ? componentsData[c - 1].cost * (options + 1) : componentsData[c - 1].cost, 2)
             };
             const formula = componentsData[c - 1].formula || "";
             switch (formula) {
             case "guard":
-                item.cost = productCost - selectedComponentsCost;
+                item.cost = cyr.formatMoney(productCost - selectedComponentsCost, 2);
                 office = 0;
             }
             if (formula !== "office") {
@@ -57,6 +61,8 @@ module.exports = {
             components = [];
             office = 0;
             annexData = {};
+        } else {
+            productCost = cyr.formatMoney(productCost, 2);
         }
         return {
             productCost,

@@ -245,9 +245,9 @@ export default () => ({
                 months,
                 yearsString: cyr.getRuAgeString(years),
                 monthsString: cyr.getRuMonthsString(months),
-                componentsTotalCost,
+                componentsTotalCost: cyr.formatMoney(componentsTotalCost, 2),
                 components,
-                componentsOfficeCost,
+                componentsOfficeCost: cyr.formatMoney(componentsOfficeCost, 2),
                 accountUsername,
                 accountPassword,
                 serviceCodeAutoSchool

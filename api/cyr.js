@@ -181,4 +181,17 @@ export default class {
     formatPhoneNumber(s) {
         return `+${s[0]} ${s[1]}${s[2]}${s[3]} ${s[4]}${s[5]}${s[6]}-${s[7]}${s[8]}-${s[9]}${s[10]}`;
     }
+
+    formatMoney(amount, decimalCount = 2, decimal = ",", thousands = ".") {
+        try {
+            decimalCount = Math.abs(decimalCount);
+            decimalCount = Number.isNaN(decimalCount) ? 2 : decimalCount;
+            const negativeSign = amount < 0 ? "-" : "";
+            const i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount), 10).toString();
+            const j = (i.length > 3) ? i.length % 3 : 0;
+            return negativeSign + (j ? i.substr(0, j) + thousands : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, `$1${thousands}`) + (decimalCount && Math.abs(amount - i) ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+        } catch {
+            return amount;
+        }
+    }
 }

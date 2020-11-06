@@ -1,4 +1,4 @@
-const calc = require("../../../api/calc");
+const calc = require("../../../api/calc").default;
 
 module.exports = class {
     onCreate(input, out) {
