@@ -8,16 +8,18 @@ export default () => ({
     },
     attachValidation: true,
     async handler(req, rep) {
+        const response = new this.Response(req, rep);
+        const log = new this.LoggerHelpers(req, this);
         // Check permissions
         const auth = new Auth(this.mongo.db, this, req, rep, C.USE_BEARER_FOR_TOKEN);
         if (!(await auth.getUserData()) || !auth.checkStatus("active")) {
-            rep.unauthorizedError(rep);
+            response.unauthorizedError();
             return;
         }
         // Validate form
         if (req.validationError) {
-            rep.logError(req, req.validationError ? req.validationError.message : "Request Error");
-            rep.validationError(rep, req.validationError || {});
+            log.error(null, req.validationError ? req.validationError.message : "Request Error");
+            response.validationError(req.validationError || {});
             return;
         }
         try {
@@ -27,7 +29,7 @@ export default () => ({
             cmData.config = cmData.config || {};
             cmData.config.codeTypes = cmData.config.codeTypes || [];
             if (cmData.config.codeTypes.indexOf(req.body.codeType) < 0) {
-                rep.requestError(rep, {
+                response.requestError({
                     failed: true,
                     error: "Invalid Code Type",
                     errorKeyword: "invalidCodeType",
@@ -45,7 +47,7 @@ export default () => ({
                 }))
             }).count();
             if (existingCount) {
-                rep.requestError(rep, {
+                response.requestError({
                     failed: true,
                     error: "One or more codes are duplicated",
                     errorKeyword: "duplicateCodes",
@@ -65,12 +67,12 @@ export default () => ({
                 ordered: true
             });
             // Send result
-            rep.successJSON(rep, {
+            response.successJSON({
                 count: result.insertedCount
             });
             return;
         } catch (e) {
-            rep.logError(req, null, e);
+            log.error(e);
             // eslint-disable-next-line consistent-return
             return Promise.reject(e);
         }

@@ -23,16 +23,18 @@ export default () => ({
     },
     attachValidation: true,
     async handler(req, rep) {
+        const response = new this.Response(req, rep);
+        const log = new this.LoggerHelpers(req, this);
         // Check permissions
         const auth = new Auth(this.mongo.db, this, req, rep, C.USE_BEARER_FOR_TOKEN);
         if (!(await auth.getUserData()) || !auth.checkStatus("active")) {
-            rep.unauthorizedError(rep);
+            response.unauthorizedError();
             return;
         }
         // Validate form
         if (req.validationError) {
-            rep.logError(req, req.validationError ? req.validationError.message : "Request Error");
-            rep.validationError(rep, req.validationError || {});
+            log.error(null, req.validationError ? req.validationError.message : "Request Error");
+            response.validationError(req.validationError || {});
             return;
         }
         try {
@@ -40,7 +42,7 @@ export default () => ({
                 _id: "cm_data"
             });
             if (!cmData || !cmData.config || !cmData.config.holdings || !auth.checkGroup("cm")) {
-                rep.requestError(rep, {
+                response.requestError({
                     failed: true,
                     error: "Configuration not found",
                     errorKeyword: "noConfig",
@@ -55,7 +57,7 @@ export default () => ({
                 }
             });
             if (!userHolding || !cmData.config.holdings[userHolding] || req.body.room > cmData.config.holdings[userHolding].rooms.length) {
-                rep.requestError(rep, {
+                response.requestError({
                     failed: true,
                     error: "Holding not found",
                     errorKeyword: "noHolding",
@@ -91,7 +93,7 @@ export default () => ({
             // Check legacy fields
             if (cardId === "legacy") {
                 if (!req.body.creditMonths || months < 1) {
-                    rep.requestError(rep, {
+                    response.requestError({
                         failed: true,
                         error: "Invalid months value",
                         errorKeyword: "invalidMonths",
@@ -103,7 +105,7 @@ export default () => ({
                     return;
                 }
                 if (!req.body.creditSum || req.body.creditSum < 1) {
-                    rep.requestError(rep, {
+                    response.requestError({
                         failed: true,
                         error: "Invalid credit sum",
                         errorKeyword: "invalidCreditSum",
@@ -115,7 +117,7 @@ export default () => ({
                     return;
                 }
                 if (!req.body.creditPercentage || req.body.creditPercentage < 1) {
-                    rep.requestError(rep, {
+                    response.requestError({
                         failed: true,
                         error: "Invalid credit percents value",
                         errorKeyword: "invalidCreditPercentage",
@@ -142,7 +144,7 @@ export default () => ({
                     upsert: true
                 });
                 if (!counterData || counterData.ok !== 1 || !counterData.value || !counterData.value.value) {
-                    rep.requestError(rep, {
+                    response.requestError({
                         failed: true,
                         error: "Could not get Legacy counter value",
                         errorKeyword: "legacyCounterError",
@@ -154,7 +156,7 @@ export default () => ({
             } else {
                 // Check non-legacy fields
                 if (!req.body.cardNumber || req.body.cardNumber < cmData.config.minCardNumber || req.body.cardNumber > cmData.config.maxCardNumber) {
-                    rep.requestError(rep, {
+                    response.requestError({
                         failed: true,
                         error: "Invalid card number",
                         errorKeyword: "invalidCardNumber",
@@ -166,7 +168,7 @@ export default () => ({
                     return;
                 }
                 if (!req.body.price || req.body.price < cmData.config.minCardPrice || req.body.price > cmData.config.maxCardPrice) {
-                    rep.requestError(rep, {
+                    response.requestError({
                         failed: true,
                         error: "Invalid price",
                         errorKeyword: "invalidPrice",
@@ -182,7 +184,7 @@ export default () => ({
                     cardType: cardId
                 });
                 if (existingData) {
-                    rep.requestError(rep, {
+                    response.requestError({
                         failed: true,
                         error: "Card with such number already exists",
                         errorKeyword: "cardExists",
@@ -261,7 +263,7 @@ export default () => ({
             const convertResult = await utils.convertDocxToPDF(tempFilePath, path.resolve(`${__dirname}/../../${req.zoiaConfig.directories.tmp}`));
             await fs.remove(tempFilePath);
             if (!convertResult) {
-                rep.requestError(rep, {
+                response.requestError({
                     failed: true,
                     error: "Could not convert file to PDF",
                     errorKeyword: "couldNotConvert",
@@ -301,7 +303,7 @@ export default () => ({
                 const convertAnnexResult = await utils.convertDocxToPDF(tempAnnexFilePath, path.resolve(`${__dirname}/../../${req.zoiaConfig.directories.tmp}`));
                 await fs.remove(tempAnnexFilePath);
                 if (!convertAnnexResult) {
-                    rep.requestError(rep, {
+                    response.requestError({
                         failed: true,
                         error: "Could not convert file to PDF",
                         errorKeyword: "couldNotConvert",
@@ -348,13 +350,13 @@ export default () => ({
                 mailer.sendMail();
             }
             // Send result
-            rep.successJSON(rep, {
+            response.successJSON({
                 uid,
                 uidAnnex
             });
             return;
         } catch (e) {
-            rep.logError(req, null, e);
+            log.error(e);
             // eslint-disable-next-line consistent-return
             return Promise.reject(e);
         }

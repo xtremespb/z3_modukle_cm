@@ -7,10 +7,11 @@ import C from "../../../shared/lib/constants";
 export default () => ({
     attachValidation: false,
     async handler(req, rep) {
+        const response = new this.Response(req, rep); const log = new this.LoggerHelpers(req, this);
         // Check permissions
         const auth = new Auth(this.mongo.db, this, req, rep, C.USE_BEARER_FOR_TOKEN);
         if (!(await auth.getUserData()) || !auth.checkStatus("admin")) {
-            rep.unauthorizedError(rep);
+            response.unauthorizedError();
             return;
         }
         // Initialize validator
@@ -20,8 +21,8 @@ export default () => ({
         const extendedValidationResult = extendedValidation.validate();
         // Check if there are any validation errors
         if (extendedValidationResult.failed) {
-            rep.logError(req, extendedValidationResult.message);
-            rep.validationError(rep, extendedValidationResult);
+            log.error(null, extendedValidationResult.message);
+            response.validationError(extendedValidationResult);
             return;
         }
         const root = path.resolve(`${__dirname}/../../${req.zoiaConfig.directories.files}/${req.zoiaModulesConfig["cm"].directoryTemplates}`).replace(/\\/gm, "/");
@@ -53,7 +54,7 @@ export default () => ({
                 }));
                 await req.removeMultipartTempFiles(formData.files);
                 if (uploadError) {
-                    rep.requestError(rep, {
+                    response.requestError({
                         failed: true,
                         error: "File upload error",
                         errorKeyword: "uploadError",
@@ -67,7 +68,7 @@ export default () => ({
             try {
                 data.config = JSON.parse(data.config);
             } catch {
-                rep.requestError(rep, {
+                response.requestError({
                     failed: true,
                     error: "JSON parse error",
                     errorKeyword: "jsonError",
@@ -89,7 +90,7 @@ export default () => ({
             });
             // Check result
             if (!update || !update.result || !update.result.ok) {
-                rep.requestError(rep, {
+                response.requestError({
                     failed: true,
                     error: "Database error",
                     errorKeyword: "databaseError",
@@ -98,12 +99,12 @@ export default () => ({
                 return;
             }
             // Return "success" result
-            rep.successJSON(rep);
+            response.successJSON();
             return;
         } catch (e) {
             // There is an exception, send error 500 as response
-            rep.logError(req, null, e);
-            rep.internalServerError(rep, e.message);
+            log.error(e);
+            response.internalServerError(e.message);
         }
     }
 });

@@ -7,9 +7,10 @@ export default () => ({
         const auth = new Auth(this.mongo.db, this, req, rep, C.USE_COOKIE_FOR_TOKEN);
         try {
             const site = new req.ZoiaSite(req, "cm", this.mongo.db);
+            const response = new this.Response(req, rep, site);
             if (!(await auth.getUserData()) || !auth.checkStatus("active")) {
                 auth.clearAuthCookie();
-                return rep.redirectToLogin(req, rep, site, req.zoiaModulesConfig["cm"].routes.frontend);
+                return response.redirectToLogin(req.zoiaModulesConfig["cm"].routes.frontend);
             }
             site.setAuth(auth);
             const cmData = (await this.mongo.db.collection(req.zoiaConfig.collections.registry).findOne({
@@ -56,7 +57,7 @@ export default () => ({
                     ...await site.getGlobals(),
                 }
             });
-            return rep.sendHTML(rep, render);
+            return response.sendHTML(render);
         } catch (e) {
             return Promise.reject(e);
         }

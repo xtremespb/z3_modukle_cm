@@ -10,9 +10,10 @@ export default () => ({
         const auth = new Auth(this.mongo.db, this, req, rep, C.USE_COOKIE_FOR_TOKEN);
         try {
             const site = new req.ZoiaSite(req, "cm", this.mongo.db);
+            const response = new this.Response(req, rep, site);
             if (!(await auth.getUserData()) || !auth.checkStatus("admin")) {
                 auth.clearAuthCookie();
-                return rep.redirectToLogin(req, rep, site, req.zoiaModulesConfig["cm"].routes.admin);
+                return response.redirectToLogin(req.zoiaModulesConfig["cm"].routes.admin);
             }
             site.setAuth(auth);
             const dir = path.resolve(`${__dirname}/../../${req.zoiaConfig.directories.files}/${req.zoiaModulesConfig["cm"].directoryTemplates}`);
@@ -41,7 +42,7 @@ export default () => ({
                 modules: req.zoiaModules,
                 moduleId: moduleData.id,
             });
-            return rep.sendHTML(rep, render);
+            return response.sendHTML(render);
         } catch (e) {
             return Promise.reject(e);
         }

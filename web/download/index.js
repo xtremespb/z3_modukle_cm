@@ -14,7 +14,7 @@ export default () => ({
             const site = new req.ZoiaSite(req, "cm", this.mongo.db);
             if (!(await auth.getUserData()) || !auth.checkStatus("active")) {
                 auth.clearAuthCookie();
-                return rep.redirectToLogin(req, rep, site, req.zoiaModulesConfig["cm"].routes.admin);
+                return response.redirectToLogin(req.zoiaModulesConfig["cm"].routes.admin);
             }
             site.setAuth(auth);
             const file = await this.mongo.db.collection(req.zoiaModulesConfig["cm"].collectionCmFiles).findOne({
