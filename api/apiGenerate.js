@@ -239,7 +239,7 @@ export default () => ({
                 year: dateYYYY,
                 dateStringMM,
                 yearYY: `${dateYYYY[2]}${dateYYYY[3]}`,
-                price: cyr.rubles(req.body.price),
+                price: cyr.rubles(price),
                 price475: cyr.rubles(((47.5 / 100) * price).toFixed(2)),
                 price95: cyr.rubles(((95 / 100) * price).toFixed(2)),
                 price5: cyr.rubles(((5 / 100) * price).toFixed(2)),
@@ -247,9 +247,9 @@ export default () => ({
                 months,
                 yearsString: cyr.getRuAgeString(years),
                 monthsString: cyr.getRuMonthsString(months),
-                componentsTotalCost: cyr.formatMoney(componentsTotalCost, 2),
+                componentsTotalCost,
                 components,
-                componentsOfficeCost: cyr.formatMoney(componentsOfficeCost, 2),
+                componentsOfficeCost,
                 accountUsername,
                 accountPassword,
                 serviceCodeAutoSchool
@@ -334,7 +334,8 @@ export default () => ({
             }
             if (req.body.customerEmail && cardId === "legacy") {
                 const mailer = new Mailer(this, "ru");
-                mailer.setRecepient(req.body.customerEmail);
+                await mailer.initMetadata();
+                mailer.setRecipient(req.body.customerEmail);
                 mailer.setSubject("Legacy");
                 mailer.setPreheader("Ваш сертификат Legacy");
                 // HTML
