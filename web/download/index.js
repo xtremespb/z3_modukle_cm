@@ -1,7 +1,5 @@
 import fs from "fs-extra";
 import path from "path";
-import Auth from "../../../../shared/lib/auth";
-import C from "../../../../shared/lib/constants";
 
 export default () => ({
     async handler(req, rep) {
@@ -10,9 +8,13 @@ export default () => ({
             return rep.code(204);
         }
         try {
-            const auth = new Auth(this.mongo.db, this, req, rep, C.USE_COOKIE_FOR_TOKEN);
+            const {
+                response,
+                auth,
+            } = req.zoia;
             const site = new req.ZoiaSite(req, "cm", this.mongo.db);
-            if (!(await auth.getUserData()) || !auth.checkStatus("active")) {
+            response.setSite(site);
+            if (!auth.checkStatus("active")) {
                 auth.clearAuthCookie();
                 return response.redirectToLogin(req.zoiaModulesConfig["cm"].routes.admin);
             }

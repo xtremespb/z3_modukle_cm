@@ -7,8 +7,6 @@ import {
 } from "uuid";
 import moment from "moment";
 import generateData from "./data/generate.json";
-import Auth from "../../../shared/lib/auth";
-import C from "../../../shared/lib/constants";
 import Mailer from "../../../shared/lib/mailer";
 import Utils from "./utils";
 import calc from "./calc";
@@ -22,12 +20,14 @@ export default () => ({
         body: generateData.schema
     },
     attachValidation: true,
-    async handler(req, rep) {
-        const response = new this.Response(req, rep);
-        const log = new this.LoggerHelpers(req, this);
+    async handler(req) {
+        const {
+            log,
+            response,
+            auth,
+        } = req.zoia;
         // Check permissions
-        const auth = new Auth(this.mongo.db, this, req, rep, C.USE_BEARER_FOR_TOKEN);
-        if (!(await auth.getUserData()) || !auth.checkStatus("active")) {
+        if (!auth.checkStatus("active")) {
             response.unauthorizedError();
             return;
         }
