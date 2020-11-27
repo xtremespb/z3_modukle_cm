@@ -1,7 +1,5 @@
 {
     "id": "cm",
-    "admin": [{
-        "icon": "account-tie-outline",
-        "link": "/admin/cm"
-    }]
+    "admin": true,
+    "test": false
 }

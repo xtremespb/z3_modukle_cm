@@ -14,7 +14,7 @@ export default () => ({
             response.setSite(site);
             if (!auth.checkStatus("admin")) {
                 auth.clearAuthCookie();
-                return response.redirectToLogin(req.zoiaModulesConfig["cm"].routes.admin);
+                return response.redirectToLogin(req.zoiaModulesConfig["cm"].routes.cm);
             }
             site.setAuth(auth);
             const dir = path.resolve(`${__dirname}/../../${req.zoiaConfig.directories.files}/${req.zoiaModulesConfig["cm"].directoryTemplates}`);
@@ -40,7 +40,7 @@ export default () => ({
                     codeTypes: data.config.codeTypes || [],
                     ...await site.getGlobals(),
                 },
-                modules: req.zoiaModules,
+                modules: req.zoiaAdmin,
                 moduleId: moduleData.id,
             });
             return response.sendHTML(render);

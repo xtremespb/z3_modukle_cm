@@ -14,7 +14,7 @@
         }
     }, 
     "routes": {
-        "admin": "/admin/cm",
+        "cm": "/admin/cm",
         "download": "/cm/download",
         "frontend": "/cm"
     },

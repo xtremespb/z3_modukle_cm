@@ -79,5 +79,6 @@
     "importDate": "Дата",
     "mFormErr.invalidCodeType": "Неверный тип кода",
     "mFormErr.duplicateCodes": "Один или несколько кодов уже заведены в системе",
-    "codesImported": "Импортировано кодов"
+    "codesImported": "Импортировано кодов",
+    "legacyCostHelpText": "Стоимость комплекса Legacy"
 }

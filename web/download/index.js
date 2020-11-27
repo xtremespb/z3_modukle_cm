@@ -16,7 +16,7 @@ export default () => ({
             response.setSite(site);
             if (!auth.checkStatus("active")) {
                 auth.clearAuthCookie();
-                return response.redirectToLogin(req.zoiaModulesConfig["cm"].routes.admin);
+                return response.redirectToLogin(req.zoiaModulesConfig["cm"].routes.cm);
             }
             site.setAuth(auth);
             const file = await this.mongo.db.collection(req.zoiaModulesConfig["cm"].collectionCmFiles).findOne({

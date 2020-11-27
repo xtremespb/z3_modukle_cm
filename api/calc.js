@@ -3,11 +3,11 @@ import Cyr from "./cyr";
 const cyr = new Cyr();
 
 export default {
-    legacy: (rangesData, componentsData, sum, months, percentage) => {
+    legacy: (rangesData, componentsData, sum, months, percentage, price) => {
         const creditSum = parseFloat(sum);
         const creditMonths = parseFloat(months);
         const creditPercentage = parseFloat(percentage);
-        let productCost = parseInt((creditSum * creditMonths * (creditPercentage / 100)) / 12, 10);
+        let productCost = price || parseInt((creditSum * creditMonths * (creditPercentage / 100)) / 12, 10);
         let annexData = {};
         let componentsArray;
         let rangeIndex;

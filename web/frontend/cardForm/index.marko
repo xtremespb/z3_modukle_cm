@@ -2,7 +2,7 @@ import Cookies from "../../../../../shared/lib/cookies"
 import generate from "../../../api/data/generate.json"
 
 $ const cookies = new Cookies(out.global.cookieOptions);
-$ const token = cookies.get(`${out.global.siteOptions.id || "zoia3"}.authToken`);
+$ const token = cookies.get(`${out.global.siteId || "zoia3"}.authToken`);
 $ const holdingData = out.global.userHoldingData;
 $ const common = out.global.common;
 <if(state.title)>
@@ -122,6 +122,20 @@ $ const common = out.global.common;
         }
       },
       {
+        id: "years",
+        type: "text",
+        label: out.global.i18n.t("years"),
+        helpText: out.global.i18n.t("yearsHelpText"),
+        convert: "integer",
+        wrapCSS: "z3-is-small",
+        maskOptions: {
+          mask: Number,
+          min: 0,
+          max: 999,
+          lazy: true
+        }
+      },
+      {
         id: "price",
         type: "text",
         label: out.global.i18n.t("price"),
@@ -136,22 +150,6 @@ $ const common = out.global.common;
           lazy: true
         }
       },
-      {
-        id: "years",
-        type: "text",
-        label: out.global.i18n.t("years"),
-        helpText: out.global.i18n.t("yearsHelpText"),
-        convert: "integer",
-        wrapCSS: "z3-is-small",
-        maskOptions: {
-          mask: Number,
-          min: 0,
-          max: 999,
-          lazy: true
-        }
-      }
-    ],
-    [
       {
         id: "creditSum",
         type: "text",
@@ -190,6 +188,14 @@ $ const common = out.global.common;
         min: 2,
         max: 4,
         defaultValue: 2
+      },
+      {
+        id: "creditPercentageInfo",
+        type: "text",
+        readOnly: true,
+        noUpdate: true,
+        label: out.global.i18n.t("creditPercentage"),
+        wrapCSS: "z3-is-small"
       }
     ],
     {

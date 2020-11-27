@@ -66,6 +66,7 @@ module.exports = class {
             this.cardForm.func.setFieldVisible("creditSum", false);
             this.cardForm.func.setFieldVisible("creditMonths", false);
             this.cardForm.func.setFieldVisible("creditPercentage", false);
+            this.cardForm.func.setFieldVisible("creditPercentageInfo", false);
             setTimeout(() => this.cardForm.func.autoFocus(), 1);
             break;
         case "btnPrintOffer":
@@ -80,30 +81,71 @@ module.exports = class {
         this.certModal.func.setActive(true, result.data.uid, result.data.uidAnnex);
     }
 
+    calculatePercentage() {
+        let percentageValue = parseFloat(this.price / (this.creditSum / 100));
+        if (percentageValue % 1 > 0.01) {
+            percentageValue = percentageValue.toFixed(2);
+        } else {
+            percentageValue = parseInt(percentageValue, 10);
+        }
+        percentageValue = `${percentageValue}%`;
+        return percentageValue;
+    }
+
     onFormValueChange(obj) {
         switch (obj.id) {
         case "cardType":
-            this.cardForm.func.setFieldVisible("price", obj.label !== "LEGACY");
+            if (this.state.legacy.manualPrice) {
+                this.cardForm.func.setItemData("price", {
+                    helpText: this.i18n.t(obj.value === "0" ? "priceHelpText" : "legacyCostHelpText")
+                });
+            }
             this.cardForm.func.setFieldVisible("cardNumber", obj.label !== "LEGACY");
             this.cardForm.func.setFieldMandatory("creditMonths", obj.label === "LEGACY");
             this.cardForm.func.setFieldMandatory("cardNumber", obj.label !== "LEGACY");
-            this.cardForm.func.setFieldMandatory("price", obj.label !== "LEGACY");
+            if (!this.state.legacy.manualPrice) {
+                this.cardForm.func.setFieldMandatory("price", obj.label !== "LEGACY");
+                this.cardForm.func.setFieldVisible("creditPercentage", obj.label === "LEGACY");
+                this.cardForm.func.setFieldVisible("price", obj.label !== "LEGACY");
+                this.cardForm.func.setFieldVisible("creditPercentageInfo", false);
+            } else {
+                this.cardForm.func.setFieldVisible("creditPercentageInfo", obj.label === "LEGACY");
+                this.cardForm.func.setFieldVisible("creditPercentage", false);
+            }
             this.cardForm.func.setFieldMandatory("years", obj.label.match(/FOX/));
             this.cardForm.func.setFieldVisible("years", obj.label.match(/FOX/));
             this.cardForm.func.setFieldVisible("creditSum", obj.label === "LEGACY");
             this.cardForm.func.setFieldVisible("creditMonths", obj.label === "LEGACY");
-            this.cardForm.func.setFieldVisible("creditPercentage", obj.label === "LEGACY");
             this.currentCardLabel = obj.label;
+            break;
+        case "creditSum":
+            this.creditSum = parseInt(obj.value.replace(/\./gm, ""), 10);
+            let percentageValue = "";
+            if (this.currentCardLabel === "LEGACY" && this.state.legacy.manualPrice && this.price) {
+                percentageValue = this.calculatePercentage();
+            }
+            this.cardForm.func.setValue("creditPercentageInfo", percentageValue);
+            document.getElementById("creditPercentageInfo").value = percentageValue;
             break;
         case "room":
             this.setState("title", parseInt(obj.value, 10) ? obj.label : null);
+            break;
+        case "price":
+            this.price = parseInt(obj.value.replace(/\./gm, ""), 10);
+            let percentagePriceValue = "";
+            if (this.currentCardLabel === "LEGACY" && this.state.legacy.manualPrice && this.creditSum) {
+                percentagePriceValue = this.calculatePercentage();
+            }
+            this.cardForm.func.setValue("creditPercentageInfo", percentagePriceValue);
+            document.getElementById("creditPercentageInfo").value = percentagePriceValue;
             break;
         }
         if (this.currentCardLabel === "LEGACY" && this.cardForm.func.getValue("creditSum") && this.cardForm.func.getValue("creditMonths") && this.cardForm.func.getValue("creditPercentage")) {
             const creditSum = this.cardForm.func.getValue("creditSum");
             const creditMonths = this.cardForm.func.getValue("creditMonths");
             const creditPercentage = this.cardForm.func.getValue("creditPercentage");
-            const data = calc.legacy(this.state.legacy.ranges, this.state.legacy.components, creditSum, creditMonths, creditPercentage);
+            const price = this.state.legacy.manualPrice ? this.cardForm.func.getValue("price") : null;
+            const data = calc.legacy(this.state.legacy.ranges, this.state.legacy.components, creditSum, creditMonths, creditPercentage, price);
             this.state.calcLegacy = data;
         } else {
             this.state.calcLegacy = null;
@@ -118,5 +160,6 @@ module.exports = class {
         this.cardForm.func.setFieldVisible("creditSum", false);
         this.cardForm.func.setFieldVisible("creditMonths", false);
         this.cardForm.func.setFieldVisible("creditPercentage", false);
+        this.cardForm.func.setFieldVisible("creditPercentageInfo", false);
     }
 };

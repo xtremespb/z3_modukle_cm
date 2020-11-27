@@ -116,6 +116,18 @@ export default () => ({
                     });
                     return;
                 }
+                if (cmData.config.legacy && cmData.config.legacy.manualPrice && !req.body.price) {
+                    response.requestError({
+                        failed: true,
+                        error: "Invalid price",
+                        errorKeyword: "invalidPrice",
+                        errorData: [{
+                            keyword: "invalidPrice",
+                            dataPath: ".price"
+                        }]
+                    });
+                    return;
+                }
                 if (!req.body.creditPercentage || req.body.creditPercentage < 1) {
                     response.requestError({
                         failed: true,
@@ -128,7 +140,11 @@ export default () => ({
                     });
                     return;
                 }
-                const calcData = calc.legacy(cmData.config.legacy.ranges, cmData.config.legacy.components, req.body.creditSum, months, req.body.creditPercentage);
+                let legacyPrice;
+                if (cmData.config.legacy && cmData.config.legacy.manualPrice) {
+                    legacyPrice = req.body.price;
+                }
+                const calcData = calc.legacy(cmData.config.legacy.ranges, cmData.config.legacy.components, req.body.creditSum, months, req.body.creditPercentage, legacyPrice);
                 componentsTotalCost = calcData.productCost;
                 componentsOfficeCost = calcData.office;
                 rangeIndex = calcData.rangeIndex;
