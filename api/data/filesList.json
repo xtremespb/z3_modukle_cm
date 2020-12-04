@@ -37,5 +37,5 @@
         "customerName": 1,
         "holding": 1
     },
-    "search": ["name"]
+    "search": ["name", "customerName"]
 }

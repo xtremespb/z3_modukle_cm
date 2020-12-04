@@ -5,17 +5,31 @@ module.exports = class {
         const state = {
             title: null,
             legacy: out.global.legacy,
-            calcLegacy: null
+            calcLegacy: null,
+            tab: "generate",
+            processValue: null,
         };
         this.state = state;
         this.holdingData = out.global.userHoldingData;
         this.i18n = out.global.i18n;
+        this.routes = out.global.routes;
+        this.routeDownload = out.global.routeDownload;
     }
 
     onMount() {
         this.generateModal = this.getComponent("z3_cm_generateModal");
         this.certModal = this.getComponent("z3_cm_certModal");
         this.cardForm = this.getComponent("z3_cm_cardForm");
+        this.state.processValue = (id, value, column) => {
+            switch (column) {
+            case "date":
+                return `${new Date(value).toLocaleDateString()} ${new Date(value).toLocaleTimeString()}`;
+            case "cardType":
+                return value.toUpperCase();
+            default:
+                return value;
+            }
+        };
     }
 
     onFormSubmit(dataForm) {
@@ -153,6 +167,7 @@ module.exports = class {
     }
 
     onFormSettled() {
+        this.cardForm = this.getComponent("z3_cm_cardForm");
         this.cardForm.func.setFieldMandatory("creditMonths", false);
         this.cardForm.func.setFieldMandatory("cardNumber", true);
         this.cardForm.func.setFieldMandatory("price", true);
@@ -161,5 +176,32 @@ module.exports = class {
         this.cardForm.func.setFieldVisible("creditMonths", false);
         this.cardForm.func.setFieldVisible("creditPercentage", false);
         this.cardForm.func.setFieldVisible("creditPercentageInfo", false);
+    }
+
+    onTabClick(e) {
+        this.setState("tab", e.target.dataset.id);
+    }
+
+    onActionClick(data) {
+        switch (data.action) {
+        case "btnDownload":
+            window.open(
+                `${this.routeDownload}?id=${data.id}`,
+                "_blank"
+            );
+            break;
+        }
+    }
+
+    onTopButtonClick(data) {
+        switch (data.button) {
+        case "btnReload":
+            this.getComponent("cmTable").func.dataRequest();
+            break;
+        }
+    }
+
+    onUnauthorized() {
+        window.location.href = this.i18n.getLocalizedURL(`${this.routes.login}?_=${new Date().getTime()}`, this.language);
     }
 };

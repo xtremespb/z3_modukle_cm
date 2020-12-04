@@ -80,5 +80,7 @@
     "mFormErr.invalidCodeType": "Неверный тип кода",
     "mFormErr.duplicateCodes": "Один или несколько кодов уже заведены в системе",
     "codesImported": "Импортировано кодов",
-    "legacyCostHelpText": "Стоимость комплекса Legacy"
+    "legacyCostHelpText": "Стоимость комплекса Legacy",
+    "generateCerts": "Создание сертификатов",
+    "listCerts": "Архив"
 }

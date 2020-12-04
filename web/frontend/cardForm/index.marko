@@ -5,272 +5,339 @@ $ const cookies = new Cookies(out.global.cookieOptions);
 $ const token = cookies.get(`${out.global.siteId || "zoia3"}.authToken`);
 $ const holdingData = out.global.userHoldingData;
 $ const common = out.global.common;
-<if(state.title)>
-  <h1 class="title">${state.title}</h1>
-</if>
-<div class="box mb-0">
-  <mform key="z3_cm_cardForm" id="cardForm" save={
-    url: "/api/cm/card/generate",
-    extras: {},
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  } fields=[
-    [
+<div class="tabs is-large">
+  <ul>
+    <li class=(state.tab === "generate" ? "is-active" : "") on-click("onTabClick")>
+      <a data-id="generate">${out.global.i18n.t("generateCerts")}</a>
+    </li>
+    <li class=(state.tab === "list" ? "is-active" : "")>
+      <a data-id="list" on-click("onTabClick")>${out.global.i18n.t("listCerts")}</a>
+    </li>
+  </ul>
+</div>
+<if(state.tab === "generate")>
+  <if(state.title)>
+    <h1 class="title">${state.title}</h1>
+  </if>
+  <div class="box mb-0">
+    <mform key="z3_cm_cardForm" id="cardForm" save={
+      url: "/api/cm/card/generate",
+      extras: {},
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    } fields=[
+      [
+        {
+          id: "cardType",
+          type: "select",
+          label: out.global.i18n.t("cardType"),
+          options: [{ value: 0, label: "–" }, ...holdingData.cards.map((c, i) => ({ value: i + 1, label: c.id.toUpperCase() }))],
+          defaultValue: "0",
+          css: "is-fullwidth",
+          wrapCSS: "z3-is-medium",
+          convert: "integer",
+          mandatory: true,
+          autoFocus: true
+        },
+        {
+          id: "cardNumber",
+          type: "text",
+          label: out.global.i18n.t("cardNumber"),
+          wrapCSS: "z3-is-medium",
+          convert: "integer",
+          helpText: `${common.minCardNumber} - ${common.maxCardNumber}`,
+          maskOptions: {
+            mask: /^[0-9]+$/i
+          },
+          emptyNull: true
+        },
+        {
+          id: "room",
+          type: "select",
+          label: out.global.i18n.t("room"),
+          options: [{ value: 0, label: "–" }, ...holdingData.rooms.map((r, i) => ({ value: i + 1, label: r }))],
+          defaultValue: "0",
+          convert: "integer",
+          css: "is-fullwidth",
+          wrapCSS: "z3-is-large",
+          mandatory: true
+        }
+      ],
+      [
+        {
+          id: "customerName",
+          type: "text",
+          label: out.global.i18n.t("customerName"),
+          wrapCSS: "z3-is-xlarge",
+          mandatory: true
+        },
+        {
+          id: "customerBirthDate",
+          type: "text",
+          label: out.global.i18n.t("customerBirthDate"),
+          wrapCSS: "z3-is-small",
+          helpText: out.global.i18n.t("customerBirthDateHelpText"),
+          mandatory: true,
+          placeholder: "__.__.____",
+          maskOptions: {
+            mask: Date,
+            min: new Date(1900, 0, 1),
+            max: new Date(2049, 0, 1),
+            lazy: true
+          }
+        },
+        {
+          id: "customerPhone",
+          type: "text",
+          label: out.global.i18n.t("customerPhone"),
+          helpText: out.global.i18n.t("customerPhoneHelpText"),
+          wrapCSS: "z3-is-medium",
+          mandatory: true,
+          placeholder: "+7-___-___-__-__",
+          maskOptions: {
+            mask: "+{7}-000-000-00-00",
+            lazy: true
+          }
+        },
+        {
+          id: "customerEmail",
+          type: "text",
+          label: out.global.i18n.t("customerEmail"),
+          helpText: out.global.i18n.t("customerEmailHelpText"),
+          wrapCSS: "z3-is-large",
+          mandatory: true
+        },
+        {
+          id: "customerAddress",
+          type: "text",
+          label: out.global.i18n.t("customerAddress"),
+          wrapCSS: "z3-is-xlarge",
+          mandatory: true
+        }
+      ],
+      [
+        {
+          id: "date",
+          type: "text",
+          label: out.global.i18n.t("date"),
+          helpText: out.global.i18n.t("dateHelpText"),
+          wrapCSS: "z3-is-small",
+          mandatory: true,
+          placeholder: "__.__.____",
+          maskOptions: {
+            mask: Date,
+            min: new Date(1900, 0, 1),
+            max: new Date(2049, 0, 1),
+            lazy: true
+          }
+        },
+        {
+          id: "years",
+          type: "text",
+          label: out.global.i18n.t("years"),
+          helpText: out.global.i18n.t("yearsHelpText"),
+          convert: "integer",
+          wrapCSS: "z3-is-small",
+          maskOptions: {
+            mask: Number,
+            min: 0,
+            max: 999,
+            lazy: true
+          }
+        },
+        {
+          id: "price",
+          type: "text",
+          label: out.global.i18n.t("price"),
+          helpText: out.global.i18n.t("priceHelpText"),
+          wrapCSS: "z3-is-small",
+          convert: "float",
+          maskOptions: {
+            mask: Number,
+            min: 0,
+            max: 99999999,
+            thousandsSeparator: ".",
+            lazy: true
+          }
+        },
+        {
+          id: "creditSum",
+          type: "text",
+          label: out.global.i18n.t("creditSum"),
+          convert: "float",
+          wrapCSS: "z3-is-small",
+          maskOptions: {
+            mask: Number,
+            min: 0,
+            max: 99999999,
+            thousandsSeparator: ".",
+            lazy: true
+          }
+        },
+        {
+          id: "creditMonths",
+          type: "text",
+          label: out.global.i18n.t("creditMonths"),
+          helpText: out.global.i18n.t("creditMonthsHelpText"),
+          convert: "integer",
+          wrapCSS: "z3-is-small",
+          maskOptions: {
+            mask: Number,
+            min: 0,
+            max: 999,
+            lazy: true
+          },
+          emptyNull: true
+        },
+        {
+          id: "creditPercentage",
+          type: "range",
+          convert: "integer",
+          label: out.global.i18n.t("creditPercentage"),
+          wrapCSS: "z3-is-small",
+          min: 2,
+          max: 4,
+          defaultValue: 2
+        },
+        {
+          id: "creditPercentageInfo",
+          type: "text",
+          readOnly: true,
+          noUpdate: true,
+          label: out.global.i18n.t("creditPercentage"),
+          wrapCSS: "z3-is-small"
+        }
+      ],
       {
-        id: "cardType",
-        type: "select",
-        label: out.global.i18n.t("cardType"),
-        options: [{ value: 0, label: "–" }, ...holdingData.cards.map((c, i) => ({ value: i + 1, label: c.id.toUpperCase() }))],
-        defaultValue: "0",
-        css: "is-fullwidth",
-        wrapCSS: "z3-is-medium",
-        convert: "integer",
-        mandatory: true,
-        autoFocus: true
+        id: "div1",
+        type: "divider"
       },
+      {
+        id: "bg1",
+        type: "buttons",
+        data: [
+          {
+            id: "btnGenerate",
+            type: "button",
+            buttonType: "submit",
+            label: out.global.i18n.t("generate"),
+            css: "is-primary"
+          },
+          {
+            id: "btnReset",
+            type: "button",
+            buttonType: "button",
+            label: out.global.i18n.t("reset"),
+            css: "is-warning"
+          },
+          {
+            id: "btnPrintOffer",
+            type: "button",
+            buttonType: "button",
+            label: out.global.i18n.t("printOffer"),
+            css: "is-light"
+          }
+        ]
+      }
+    ] validation=generate progressButtonId="btnGenerate" i18n=out.global.i18n manual=true on-form-submit("onFormSubmit") on-button-click("onButtonClick") on-post-success("onFormPostSuccess") on-value-change("onFormValueChange") on-all-settled("onFormSettled")/>
+  </div>
+  <if(state.calcLegacy)>
+    <if(state.calcLegacy.productCost)>
+      <div class="box mt-2">
+        <div class="table-container">
+          <table class="table is-striped is-narrow is-hoverable is-fullwidth">
+            <thead>
+              <tr>
+                <th>${out.global.i18n.t("title")}</th>
+                <th class="has-text-centered">${out.global.i18n.t("amount")}</th>
+                <th class="has-text-centered">${out.global.i18n.t("cost")}</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <th>${out.global.i18n.t("total")}</th>
+                <th>&nbsp;</th>
+                <th class="has-text-centered">${state.calcLegacy.productCost} ₽</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              <for|item| of=state.calcLegacy.components>
+                <tr>
+                  <td>${item.title}</td>
+                  <td class="has-text-centered">${item.amount}</td>
+                  <td class="has-text-centered">${item.cost} ₽</td>
+                </tr>
+              </for>
+              <tr>
+                <td>${out.global.i18n.t("office")}</td>
+                <td>&nbsp;</td>
+                <td class="has-text-centered">${state.calcLegacy.office} ₽</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </if>
+    <else>
+      <div class="notification is-warning mt-2">${out.global.i18n.t("lowProductCost")}</div>
+    </else>
+  </if>
+</if>
+<if(state.tab === "list")>
+  <div class="box mb-0">
+    <mtable css="table is-striped is-hoverable is-fullwidth" dataSource={
+      method: "post",
+      url: "/api/cm/frontend/files/list",
+      data: {},
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    } id="cmTable" key="cmTable" columns=[
       {
         id: "cardNumber",
-        type: "text",
-        label: out.global.i18n.t("cardNumber"),
-        wrapCSS: "z3-is-medium",
-        convert: "integer",
-        helpText: `${common.minCardNumber} - ${common.maxCardNumber}`,
-        maskOptions: {
-          mask: /^[0-9]+$/i
-        },
-        emptyNull: true
+        title: out.global.i18n.t("cardNumber"),
+        css: "z3-ap-cm-list-cardNumber",
+        sortable: true
       },
       {
-        id: "room",
-        type: "select",
-        label: out.global.i18n.t("room"),
-        options: [{ value: 0, label: "–" }, ...holdingData.rooms.map((r, i) => ({ value: i + 1, label: r }))],
-        defaultValue: "0",
-        convert: "integer",
-        css: "is-fullwidth",
-        wrapCSS: "z3-is-large",
-        mandatory: true
-      }
-    ],
-    [
+        id: "cardType",
+        title: out.global.i18n.t("cardType"),
+        css: "z3-ap-cm-list-cardType",
+        sortable: true
+      },
       {
         id: "customerName",
-        type: "text",
-        label: out.global.i18n.t("customerName"),
-        wrapCSS: "z3-is-xlarge",
-        mandatory: true
+        title: out.global.i18n.t("customerName"),
+        sortable: true
       },
-      {
-        id: "customerBirthDate",
-        type: "text",
-        label: out.global.i18n.t("customerBirthDate"),
-        wrapCSS: "z3-is-small",
-        helpText: out.global.i18n.t("customerBirthDateHelpText"),
-        mandatory: true,
-        placeholder: "__.__.____",
-        maskOptions: {
-          mask: Date,
-          min: new Date(1900, 0, 1),
-          max: new Date(2049, 0, 1),
-          lazy: true
-        }
-      },
-      {
-        id: "customerPhone",
-        type: "text",
-        label: out.global.i18n.t("customerPhone"),
-        helpText: out.global.i18n.t("customerPhoneHelpText"),
-        wrapCSS: "z3-is-medium",
-        mandatory: true,
-        placeholder: "+7-___-___-__-__",
-        maskOptions: {
-          mask: "+{7}-000-000-00-00",
-          lazy: true
-        }
-      },
-      {
-        id: "customerEmail",
-        type: "text",
-        label: out.global.i18n.t("customerEmail"),
-        helpText: out.global.i18n.t("customerEmailHelpText"),
-        wrapCSS: "z3-is-large",
-        mandatory: true
-      },
-      {
-        id: "customerAddress",
-        type: "text",
-        label: out.global.i18n.t("customerAddress"),
-        wrapCSS: "z3-is-xlarge",
-        mandatory: true
-      }
-    ],
-    [
       {
         id: "date",
-        type: "text",
-        label: out.global.i18n.t("date"),
-        helpText: out.global.i18n.t("dateHelpText"),
-        wrapCSS: "z3-is-small",
-        mandatory: true,
-        placeholder: "__.__.____",
-        maskOptions: {
-          mask: Date,
-          min: new Date(1900, 0, 1),
-          max: new Date(2049, 0, 1),
-          lazy: true
-        }
-      },
-      {
-        id: "years",
-        type: "text",
-        label: out.global.i18n.t("years"),
-        helpText: out.global.i18n.t("yearsHelpText"),
-        convert: "integer",
-        wrapCSS: "z3-is-small",
-        maskOptions: {
-          mask: Number,
-          min: 0,
-          max: 999,
-          lazy: true
-        }
-      },
-      {
-        id: "price",
-        type: "text",
-        label: out.global.i18n.t("price"),
-        helpText: out.global.i18n.t("priceHelpText"),
-        wrapCSS: "z3-is-small",
-        convert: "float",
-        maskOptions: {
-          mask: Number,
-          min: 0,
-          max: 99999999,
-          thousandsSeparator: ".",
-          lazy: true
-        }
-      },
-      {
-        id: "creditSum",
-        type: "text",
-        label: out.global.i18n.t("creditSum"),
-        convert: "float",
-        wrapCSS: "z3-is-small",
-        maskOptions: {
-          mask: Number,
-          min: 0,
-          max: 99999999,
-          thousandsSeparator: ".",
-          lazy: true
-        }
-      },
-      {
-        id: "creditMonths",
-        type: "text",
-        label: out.global.i18n.t("creditMonths"),
-        helpText: out.global.i18n.t("creditMonthsHelpText"),
-        convert: "integer",
-        wrapCSS: "z3-is-small",
-        maskOptions: {
-          mask: Number,
-          min: 0,
-          max: 999,
-          lazy: true
-        },
-        emptyNull: true
-      },
-      {
-        id: "creditPercentage",
-        type: "range",
-        convert: "integer",
-        label: out.global.i18n.t("creditPercentage"),
-        wrapCSS: "z3-is-small",
-        min: 2,
-        max: 4,
-        defaultValue: 2
-      },
-      {
-        id: "creditPercentageInfo",
-        type: "text",
-        readOnly: true,
-        noUpdate: true,
-        label: out.global.i18n.t("creditPercentage"),
-        wrapCSS: "z3-is-small"
+        sortable: true,
+        css: "z3-ap-cm-list-date",
+        title: out.global.i18n.t("date")
       }
-    ],
-    {
-      id: "div1",
-      type: "divider"
-    },
-    {
-      id: "bg1",
-      type: "buttons",
-      data: [
-        {
-          id: "btnGenerate",
-          type: "button",
-          buttonType: "submit",
-          label: out.global.i18n.t("generate"),
-          css: "is-primary"
-        },
-        {
-          id: "btnReset",
-          type: "button",
-          buttonType: "button",
-          label: out.global.i18n.t("reset"),
-          css: "is-warning"
-        },
-        {
-          id: "btnPrintOffer",
-          type: "button",
-          buttonType: "button",
-          label: out.global.i18n.t("printOffer"),
-          css: "is-light"
-        }
-      ]
-    }
-  ] validation=generate progressButtonId="btnGenerate" i18n=out.global.i18n manual=true on-form-submit("onFormSubmit") on-button-click("onButtonClick") on-post-success("onFormPostSuccess") on-value-change("onFormValueChange") on-all-settled("onFormSettled")/>
-</div>
-<if(state.calcLegacy)>
-  <if(state.calcLegacy.productCost)>
-    <div class="box mt-2">
-      <div class="table-container">
-        <table class="table is-striped is-narrow is-hoverable is-fullwidth">
-          <thead>
-            <tr>
-              <th>${out.global.i18n.t("title")}</th>
-              <th class="has-text-centered">${out.global.i18n.t("amount")}</th>
-              <th class="has-text-centered">${out.global.i18n.t("cost")}</th>
-            </tr>
-          </thead>
-          <tfoot>
-            <tr>
-              <th>${out.global.i18n.t("total")}</th>
-              <th>&nbsp;</th>
-              <th class="has-text-centered">${state.calcLegacy.productCost} ₽</th>
-            </tr>
-          </tfoot>
-          <tbody>
-            <for|item| of=state.calcLegacy.components>
-              <tr>
-                <td>${item.title}</td>
-                <td class="has-text-centered">${item.amount}</td>
-                <td class="has-text-centered">${item.cost} ₽</td>
-              </tr>
-            </for>
-            <tr>
-              <td>${out.global.i18n.t("office")}</td>
-              <td>&nbsp;</td>
-              <td class="has-text-centered">${state.calcLegacy.office} ₽</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </if>
-  <else>
-    <div class="notification is-warning mt-2">${out.global.i18n.t("lowProductCost")}</div>
-  </else>
+    ] actions=[
+      {
+        id: "btnDownload",
+        css: "button is-small",
+        icon: "mdi mdi-download",
+        text: out.global.i18n.t("download"),
+        displayText: false,
+        tooltip: false
+      }
+    ] buttons=[
+      {
+        id: "btnReload",
+        css: "button",
+        icon: "mdi mdi-refresh",
+        text: out.global.i18n.t("reload"),
+        displayText: true,
+        tooltip: false
+      }
+    ] actionsTitle=out.global.i18n.t("actions") processValue=state.processValue sortId="date" sortDirection="desc" checkboxColumn=false on-action-click("onActionClick") on-top-button-click("onTopButtonClick") i18n=out.global.i18n on-unauthorized("onUnauthorized") autoItemsPerPage=true/>
+    <mnotify key=`cmList_mnotify`/>
+  </div>
 </if>
 <mnotify key=`cardForm_mnotify`/>
 <generateModal key="z3_cm_generateModal" on-confirm-click("onConfirmClick")/>

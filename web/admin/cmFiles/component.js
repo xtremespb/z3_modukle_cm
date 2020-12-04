@@ -7,10 +7,10 @@ module.exports = class {
             loading: false
         };
         this.language = out.global.language;
-        this.routes = out.global.routes;
         this.cookieOptions = out.global.cookieOptions;
         this.siteId = out.global.siteId;
         this.i18n = out.global.i18n;
+        this.routes = out.global.routes;
         this.routeDownload = out.global.routeDownload;
     }
 

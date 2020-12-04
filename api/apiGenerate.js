@@ -233,7 +233,7 @@ export default () => ({
             const accountUsername = `L${usernameLetter1}${usernameLetter2}${usernameHId}${usernameRId}${cardNumber}`;
             const accountPassword = `PC${parseInt(cardNumber, 10)}`;
             let serviceCodeAutoSchool = "—";
-            if (cmData.config.legacy.ranges[rangeIndex].components.indexOf(6) > -1) {
+            if (cmData.config.legacy.ranges[rangeIndex].components.indexOf(5) > -1) {
                 const codeRecordDrivingSchool = await this.mongo.db.collection(req.zoiaModulesConfig["cm"].collectionCmCodes).findOneAndDelete({
                     codeType: "drivingSchool"
                 }, {
