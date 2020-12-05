@@ -44,7 +44,7 @@ export default class {
 
     _execute(cmd) {
         return new Promise((resolve, reject) => {
-            exec(cmd, (error, stdout, stderr) => {
+            exec(cmd, (error, stdout) => {
                 if (error) {
                     reject(error);
                     return;
