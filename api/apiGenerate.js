@@ -348,21 +348,38 @@ export default () => ({
                     upsert: true
                 });
             }
-            if (req.body.customerEmail && cardId === "legacy") {
-                const mailer = new Mailer(this, "ru");
-                await mailer.initMetadata();
-                mailer.setRecipient(req.body.customerEmail);
-                mailer.setSubject("Legacy");
-                mailer.setPreheader("Ваш сертификат Legacy");
-                // HTML
-                mailer.setHTML(`
+            const mailer = new Mailer(this, "ru");
+            await mailer.initMetadata();
+            if (cardId === "legacy") {
+                if (req.body.customerEmail) {
+                    mailer.setRecipient(req.body.customerEmail);
+                    mailer.setSubject("Legacy");
+                    mailer.setPreheader("Ваш сертификат Legacy");
+                    // mailer.addAttachment(`${userHolding}_${cardId}.pdf`, saveFilename);
+                    // HTML
+                    mailer.setHTML(`
                 ${this.mailTemplateComponentsHTML["paragraph"]({ text: "Благодарим вас за приобретение комплекса Legacy." })}
                 ${this.mailTemplateComponentsHTML["paragraph"]({ text: "Вам доступны огромное количество юридических услуг и других компонентов Legacy. Подробнее обо всем этом вы можете узнать и воспользоваться ими на <a href=\"https://legacycard.ru\">legacycard.ru</a>." })}
                 ${this.mailTemplateComponentsHTML["paragraph"]({ text: `<strong>Имя пользователя:</strong>&nbsp;${accountUsername}<br><strong>Пароль:</strong>&nbsp;${accountPassword}` })}
                 ${this.mailTemplateComponentsHTML["paragraph"]({ text: "" })}
                 `);
+                    // Text
+                    mailer.setText(`${this.mailTemplateComponentsText["paragraph"]({ text: "Благодарим вас за приобретение комплекса Legacy." })}${this.mailTemplateComponentsText["paragraph"]({ text: "Вам доступны огромное количество юридических услуг и других компонентов Legacy. Подробнее обо всем этом вы можете узнать и воспользоваться ими на https://legacycard.ru." })}${this.mailTemplateComponentsText["paragraph"]({ text: `Имя пользователя: ${accountUsername}\nПароль: ${accountPassword}` })}`, false);
+                    mailer.addLogo();
+                    mailer.sendMail();
+                }
+                mailer.setRecipient("client@legacycard.ru");
+                mailer.setSubject("Новый сертификат Legacy");
+                mailer.setPreheader("Новый сертификат Legacy");
+                mailer.addAttachment(`${userHolding}_${cardId}.pdf`, saveFilename);
+                // HTML
+                mailer.setHTML(`
+                ${this.mailTemplateComponentsHTML["paragraph"]({ text: "На сайте был выписан новый сертификат." })}
+                ${this.mailTemplateComponentsHTML["paragraph"]({ text: `<strong>Имя пользователя:</strong>&nbsp;${accountUsername}<br><strong>Пароль:</strong>&nbsp;${accountPassword}` })}
+                ${this.mailTemplateComponentsHTML["paragraph"]({ text: "" })}
+                `);
                 // Text
-                mailer.setText(`${this.mailTemplateComponentsText["paragraph"]({ text: "Благодарим вас за приобретение комплекса Legacy." })}${this.mailTemplateComponentsText["paragraph"]({ text: "Вам доступны огромное количество юридических услуг и других компонентов Legacy. Подробнее обо всем этом вы можете узнать и воспользоваться ими на https://legacycard.ru." })}${this.mailTemplateComponentsText["paragraph"]({ text: `Имя пользователя: ${accountUsername}\nПароль: ${accountPassword}` })}`, false);
+                mailer.setText(`${this.mailTemplateComponentsText["paragraph"]({ text: "На сайте был выписан новый сертификат." })}${this.mailTemplateComponentsText["paragraph"]({ text: `Имя пользователя: ${accountUsername}\nПароль: ${accountPassword}` })}`, false);
                 mailer.addLogo();
                 mailer.sendMail();
             }

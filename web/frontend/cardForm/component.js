@@ -96,7 +96,9 @@ module.exports = class {
     }
 
     calculatePercentage() {
-        let percentageValue = parseFloat(this.price / (this.creditSum / 100));
+        // let percentageValue = parseFloat(this.price / (this.creditSum / 100));
+        // (цена комплекса / (сумма кредита / 100%)) / (кол-во месяцев / 12)
+        let percentageValue = parseFloat((this.price / (this.creditSum / 100)) / (this.creditMonths / 12));
         if (percentageValue % 1 > 0.01) {
             percentageValue = percentageValue.toFixed(2);
         } else {
@@ -104,6 +106,15 @@ module.exports = class {
         }
         percentageValue = `${percentageValue}%`;
         return percentageValue;
+    }
+
+    setPercentagePriceValue() {
+        let percentagePriceValue = "";
+        if (this.currentCardLabel === "LEGACY" && this.state.legacy.manualPrice && this.creditSum && this.creditMonths) {
+            percentagePriceValue = this.calculatePercentage();
+        }
+        this.cardForm.func.setValue("creditPercentageInfo", percentagePriceValue);
+        document.getElementById("cardForm_creditPercentageInfo").value = percentagePriceValue;
     }
 
     onFormValueChange(obj) {
@@ -134,24 +145,18 @@ module.exports = class {
             break;
         case "creditSum":
             this.creditSum = parseInt(obj.value.replace(/\./gm, ""), 10);
-            let percentageValue = "";
-            if (this.currentCardLabel === "LEGACY" && this.state.legacy.manualPrice && this.price) {
-                percentageValue = this.calculatePercentage();
-            }
-            this.cardForm.func.setValue("creditPercentageInfo", percentageValue);
-            document.getElementById("creditPercentageInfo").value = percentageValue;
+            this.setPercentagePriceValue();
             break;
         case "room":
             this.setState("title", parseInt(obj.value, 10) ? obj.label : null);
             break;
+        case "creditMonths":
+            this.creditMonths = parseInt(obj.value, 10);
+            this.setPercentagePriceValue();
+            break;
         case "price":
             this.price = parseInt(obj.value.replace(/\./gm, ""), 10);
-            let percentagePriceValue = "";
-            if (this.currentCardLabel === "LEGACY" && this.state.legacy.manualPrice && this.creditSum) {
-                percentagePriceValue = this.calculatePercentage();
-            }
-            this.cardForm.func.setValue("creditPercentageInfo", percentagePriceValue);
-            document.getElementById("creditPercentageInfo").value = percentagePriceValue;
+            this.setPercentagePriceValue();
             break;
         }
         if (this.currentCardLabel === "LEGACY" && this.cardForm.func.getValue("creditSum") && this.cardForm.func.getValue("creditMonths") && this.cardForm.func.getValue("creditPercentage")) {
