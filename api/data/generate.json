@@ -56,6 +56,9 @@
             },
             "creditPercentage": {
                 "type": ["number", "null"]
+            },
+            "first10": {
+                "type": ["boolean", "null"]
             }
         },
         "required": ["cardNumber", "cardType", "room", "customerName", "customerBirthDate", "customerPhone", "customerEmail", "customerAddress", "date", "price"]

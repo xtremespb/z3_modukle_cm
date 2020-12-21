@@ -3,7 +3,7 @@ import Cyr from "./cyr";
 const cyr = new Cyr();
 
 export default {
-    legacy: (rangesData, componentsData, sum, months, percentage, price) => {
+    legacy: (rangesData, componentsData, sum, months, percentage, price, first10 = false) => {
         const creditSum = parseFloat(sum);
         const creditMonths = parseFloat(months);
         const creditPercentage = parseFloat(percentage);
@@ -19,11 +19,12 @@ export default {
         });
         componentsArray = componentsArray || [];
         let selectedComponentsCost = 0;
-        componentsArray.map(c => {
+        componentsArray.map((c, i) => {
             const {
                 cost,
             } = componentsData[c - 1];
             selectedComponentsCost += cost || 0;
+            componentsArray[i] = (c === 11 && !first10) ? 9 : (c === 9 && first10) ? 11 : c;
         });
         let options = 1;
         let office = 0;
@@ -41,16 +42,17 @@ export default {
         let components = [];
         componentsArray.map(c => {
             annexData[`c${c}`] = true;
+            const formula = componentsData[c - 1].formula || "";
             const item = {
                 title: componentsData[c - 1].title,
                 amount: c === 2 ? options + 1 : componentsData[c - 1].amount,
                 cost: cyr.formatMoney(c === 2 ? componentsData[c - 1].cost * (options + 1) : componentsData[c - 1].cost, 2)
             };
-            const formula = componentsData[c - 1].formula || "";
             switch (formula) {
             case "guard":
                 item.cost = cyr.formatMoney(productCost - selectedComponentsCost, 2);
                 office = 0;
+                break;
             }
             if (formula !== "office") {
                 components.push(item);

@@ -13,7 +13,7 @@
     "frontend": "Генерация сертификатов",
     "holdingUnset": "Данному пользователю не назначен холдинг. Пожалуйста, обратитесь к администратору сайта.",
     "holdingId": "ID холдинга",
-    "generate": "Сгенерировать",
+    "generate": "Сгенерировать сертификат",
     "tabConfig": "Конфигурация",
     "close": "Закрыть",
     "tabFiles": "Файлы",
@@ -27,8 +27,8 @@
     "customerPhoneHelpText": "Формат: +7-911-987-65-43",
     "customerEmail": "E-mail",
     "customerEmailHelpText": "Формат: user@domain.ru",
-    "customerAddress": "Адрес",
-    "date": "Дата выдачи",
+    "customerAddress": "Адрес регистрации или проживания",
+    "date": "Дата выдачи серт.",
     "dateHelpText": "Формат: ДД.ММ.ГГГГ",
     "price": "Стоимость",
     "priceHelpText": "Кроме Legacy",
@@ -82,5 +82,7 @@
     "codesImported": "Импортировано кодов",
     "legacyCostHelpText": "Стоимость комплекса Legacy",
     "generateCerts": "Создание сертификатов",
-    "listCerts": "Архив"
+    "listCerts": "Архив",
+    "labelFirst10": "Первый взнос",
+    "checkboxFirst10": "Более 10%"
 }

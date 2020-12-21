@@ -144,7 +144,7 @@ export default () => ({
                 if (cmData.config.legacy && cmData.config.legacy.manualPrice) {
                     legacyPrice = req.body.price;
                 }
-                const calcData = calc.legacy(cmData.config.legacy.ranges, cmData.config.legacy.components, req.body.creditSum, months, req.body.creditPercentage, legacyPrice);
+                const calcData = calc.legacy(cmData.config.legacy.ranges, cmData.config.legacy.components, req.body.creditSum, months, req.body.creditPercentage, legacyPrice, req.body.first10);
                 componentsTotalCost = calcData.productCost;
                 componentsOfficeCost = calcData.office;
                 rangeIndex = calcData.rangeIndex;

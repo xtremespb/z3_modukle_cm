@@ -4,7 +4,8 @@ const fs = require("fs-extra");
 
 module.exports = async (config, moduleConfig, db) => {
     try {
-        await fs.ensureDir(path.resolve(`${__dirname}/../../${config.directories.files}/${moduleConfig.directory}`));
+        await fs.ensureDir(path.resolve(`${__dirname}/../../${config.directories.files}/${moduleConfig.directoryTemplates}`));
+        await fs.ensureDir(path.resolve(`${__dirname}/../../${config.directories.files}/${moduleConfig.directoryFiles}`));
         await db.collection(config.collections.counters).updateOne({
             _id: "cmLegacy"
         }, {

@@ -78,13 +78,14 @@ module.exports = class {
             this.cardForm.func.setFieldMandatory("years", false);
             this.cardForm.func.setFieldVisible("years", false);
             this.cardForm.func.setFieldVisible("creditSum", false);
+            this.cardForm.func.setFieldVisible("first10", false);
             this.cardForm.func.setFieldVisible("creditMonths", false);
             this.cardForm.func.setFieldVisible("creditPercentage", false);
             this.cardForm.func.setFieldVisible("creditPercentageInfo", false);
             setTimeout(() => this.cardForm.func.autoFocus(), 1);
             break;
         case "btnPrintOffer":
-            const win = window.open("/files/offer.pdf", "_blank");
+            const win = window.open(`/files/offer${this.first10 ? "_first10" : ""}.pdf`, "_blank");
             win.focus();
             win.print();
             break;
@@ -140,6 +141,7 @@ module.exports = class {
             this.cardForm.func.setFieldMandatory("years", obj.label.match(/FOX/));
             this.cardForm.func.setFieldVisible("years", obj.label.match(/FOX/));
             this.cardForm.func.setFieldVisible("creditSum", obj.label === "LEGACY");
+            this.cardForm.func.setFieldVisible("first10", obj.label === "LEGACY" && this.state.legacy.first10);
             this.cardForm.func.setFieldVisible("creditMonths", obj.label === "LEGACY");
             this.currentCardLabel = obj.label;
             break;
@@ -158,13 +160,20 @@ module.exports = class {
             this.price = parseInt(obj.value.replace(/\./gm, ""), 10);
             this.setPercentagePriceValue();
             break;
+        case "first10":
+            this.first10 = obj.value;
+            this.setPercentagePriceValue();
+            break;
         }
-        if (this.currentCardLabel === "LEGACY" && this.cardForm.func.getValue("creditSum") && this.cardForm.func.getValue("creditMonths") && this.cardForm.func.getValue("creditPercentage")) {
-            const creditSum = this.cardForm.func.getValue("creditSum");
-            const creditMonths = this.cardForm.func.getValue("creditMonths");
-            const creditPercentage = this.cardForm.func.getValue("creditPercentage");
+        if (this.currentCardLabel === "LEGACY" && this.creditSum && this.creditMonths) {
+            const {
+                creditSum,
+                creditMonths,
+                creditPercentage,
+                first10
+            } = this;
             const price = this.state.legacy.manualPrice ? this.cardForm.func.getValue("price") : null;
-            const data = calc.legacy(this.state.legacy.ranges, this.state.legacy.components, creditSum, creditMonths, creditPercentage, price);
+            const data = calc.legacy(this.state.legacy.ranges, this.state.legacy.components, creditSum, creditMonths, creditPercentage, price, first10);
             this.state.calcLegacy = data;
         } else {
             this.state.calcLegacy = null;
@@ -178,6 +187,7 @@ module.exports = class {
         this.cardForm.func.setFieldMandatory("price", true);
         this.cardForm.func.setFieldVisible("years", false);
         this.cardForm.func.setFieldVisible("creditSum", false);
+        this.cardForm.func.setFieldVisible("first10", false);
         this.cardForm.func.setFieldVisible("creditMonths", false);
         this.cardForm.func.setFieldVisible("creditPercentage", false);
         this.cardForm.func.setFieldVisible("creditPercentageInfo", false);
