@@ -160,6 +160,9 @@ module.exports = class {
             this.price = parseInt(obj.value.replace(/\./gm, ""), 10);
             this.setPercentagePriceValue();
             break;
+        case "creditPercentage":
+            this.creditPercentage = parseInt(obj.value, 10);
+            break;
         case "first10":
             this.first10 = obj.value;
             this.setPercentagePriceValue();
@@ -169,11 +172,11 @@ module.exports = class {
             const {
                 creditSum,
                 creditMonths,
-                creditPercentage,
                 first10
             } = this;
             const price = this.state.legacy.manualPrice ? this.cardForm.func.getValue("price") : null;
-            const data = calc.legacy(this.state.legacy.ranges, this.state.legacy.components, creditSum, creditMonths, creditPercentage, price, first10);
+            const percentage = this.creditPercentage || this.cardForm.func.getValue("creditPercentage");
+            const data = calc.legacy(this.state.legacy.ranges, this.state.legacy.components, creditSum, creditMonths, percentage, price, first10);
             this.state.calcLegacy = data;
         } else {
             this.state.calcLegacy = null;
