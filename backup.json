@@ -1,0 +1,4 @@
+{
+    "collections": ["cmFiles", "cmCodes"],
+    "dirs": ["data/cm"]
+}
