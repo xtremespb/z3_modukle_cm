@@ -28,7 +28,7 @@
     "customerEmail": "E-mail",
     "customerEmailHelpText": "Формат: user@domain.ru",
     "customerAddress": "Адрес регистрации или проживания",
-    "date": "Дата выдачи серт.",
+    "date": "Дата сертификата",
     "dateHelpText": "Формат: ДД.ММ.ГГГГ",
     "price": "Стоимость",
     "priceHelpText": "Кроме Legacy",
@@ -84,5 +84,6 @@
     "generateCerts": "Создание сертификатов",
     "listCerts": "Архив",
     "labelFirst10": "Первый взнос",
-    "checkboxFirst10": "Более 10%"
+    "checkboxFirst10": "Более 10%",
+    "printTechService": "Сертификат тех. помощи"
 }

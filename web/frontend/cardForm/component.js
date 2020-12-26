@@ -85,9 +85,14 @@ module.exports = class {
             setTimeout(() => this.cardForm.func.autoFocus(), 1);
             break;
         case "btnPrintOffer":
-            const win = window.open(`/files/offer${this.first10 ? "_first10" : ""}.pdf`, "_blank");
-            win.focus();
-            win.print();
+            const winOffer = window.open(`/files/offer${this.first10 ? "_first10" : ""}.pdf`, "_blank");
+            winOffer.focus();
+            winOffer.print();
+            break;
+        case "btnPrintTechService":
+            const winTech = window.open(`/files/tech_service.pdf`, "_blank");
+            winTech.focus();
+            winTech.print();
             break;
         }
     }
