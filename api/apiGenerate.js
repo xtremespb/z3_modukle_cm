@@ -92,7 +92,7 @@ export default () => ({
             } = req.body;
             // Check legacy fields
             if (cardId === "legacy") {
-                if (!req.body.creditMonths || months < 1) {
+                if (!cmData.config.legacy.noCredit && (!req.body.creditMonths || months < 1)) {
                     response.requestError({
                         failed: true,
                         error: "Invalid months value",
@@ -104,7 +104,7 @@ export default () => ({
                     });
                     return;
                 }
-                if (!req.body.creditSum || req.body.creditSum < 1) {
+                if (!cmData.config.legacy.noCredit && (!req.body.creditSum || req.body.creditSum < 1)) {
                     response.requestError({
                         failed: true,
                         error: "Invalid credit sum",
@@ -128,7 +128,7 @@ export default () => ({
                     });
                     return;
                 }
-                if (!req.body.creditPercentage || req.body.creditPercentage < 1) {
+                if (!cmData.config.legacy.noCredit  && (!req.body.creditPercentage || req.body.creditPercentage < 1)) {
                     response.requestError({
                         failed: true,
                         error: "Invalid credit percents value",
