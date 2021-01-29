@@ -114,10 +114,28 @@ module.exports = class {
         return percentageValue;
     }
 
+    calculatePercentageNoCredit() {
+        // let percentageValue = parseFloat(this.price / (this.creditSum / 100));
+        // (цена комплекса / (сумма кредита / 100%)) / (кол-во месяцев / 12)
+        let percentageValue = parseFloat((this.price / (this.carCost / 100)));
+        if (percentageValue % 1 > 0.01) {
+            percentageValue = percentageValue.toFixed(2);
+        } else {
+            percentageValue = parseInt(percentageValue, 10);
+        }
+        percentageValue = `${percentageValue}%`;
+        return percentageValue;
+    }
+
     setPercentagePriceValue() {
         let percentagePriceValue = "";
-        if (this.currentCardLabel === "LEGACY" && this.state.legacy.manualPrice && this.creditSum && this.creditMonths) {
-            percentagePriceValue = this.calculatePercentage();
+        if (this.currentCardLabel === "LEGACY") {
+            if (this.state.legacy.manualPrice && this.creditSum && this.creditMonths) {
+                percentagePriceValue = this.calculatePercentage();
+            }
+            if (this.state.legacy.noCredit && this.carCost && this.price) {
+                percentagePriceValue = this.calculatePercentageNoCredit();
+            }
         }
         this.cardForm.func.setValue("creditPercentageInfo", percentagePriceValue);
         document.getElementById("cardForm_creditPercentageInfo").value = percentagePriceValue;
@@ -148,10 +166,22 @@ module.exports = class {
             this.cardForm.func.setFieldVisible("creditSum", obj.label === "LEGACY");
             this.cardForm.func.setFieldVisible("first10", obj.label === "LEGACY" && this.state.legacy.first10);
             this.cardForm.func.setFieldVisible("creditMonths", obj.label === "LEGACY");
+            if (this.state.legacy.noCredit && obj.label === "LEGACY") {
+                this.cardForm.func.setFieldVisible("creditSum", false);
+                this.cardForm.func.setFieldVisible("creditMonths", false);
+                this.cardForm.func.setFieldMandatory("creditSum", false);
+                this.cardForm.func.setFieldMandatory("creditMonths", false);
+                this.cardForm.func.setFieldVisible("carCost", true);
+                this.cardForm.func.setFieldMandatory("carCost", true);
+            }
             this.currentCardLabel = obj.label;
             break;
         case "creditSum":
             this.creditSum = parseInt(obj.value.replace(/\./gm, ""), 10);
+            this.setPercentagePriceValue();
+            break;
+        case "carCost":
+            this.carCost = parseInt(obj.value.replace(/\./gm, ""), 10);
             this.setPercentagePriceValue();
             break;
         case "room":
@@ -173,11 +203,11 @@ module.exports = class {
             this.setPercentagePriceValue();
             break;
         }
-        if (this.currentCardLabel === "LEGACY" && this.creditSum && this.creditMonths) {
+        if (this.currentCardLabel === "LEGACY" && ((this.creditSum && this.creditMonths) || (this.state.legacy.noCredit && this.price))) {
             const {
                 creditSum,
                 creditMonths,
-                first10
+                first10,
             } = this;
             const price = this.state.legacy.manualPrice ? this.cardForm.func.getValue("price") : null;
             const percentage = this.creditPercentage || this.cardForm.func.getValue("creditPercentage");
@@ -193,12 +223,14 @@ module.exports = class {
         this.cardForm.func.setFieldMandatory("creditMonths", false);
         this.cardForm.func.setFieldMandatory("cardNumber", true);
         this.cardForm.func.setFieldMandatory("price", true);
+        this.cardForm.func.setFieldMandatory("carCost", false);
         this.cardForm.func.setFieldVisible("years", false);
         this.cardForm.func.setFieldVisible("creditSum", false);
         this.cardForm.func.setFieldVisible("first10", false);
         this.cardForm.func.setFieldVisible("creditMonths", false);
         this.cardForm.func.setFieldVisible("creditPercentage", false);
         this.cardForm.func.setFieldVisible("creditPercentageInfo", false);
+        this.cardForm.func.setFieldVisible("carCost", false);
     }
 
     onTabClick(e) {

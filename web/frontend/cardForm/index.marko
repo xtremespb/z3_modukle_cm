@@ -162,6 +162,20 @@ $ const common = out.global.common;
           }
         },
         {
+          id: "carCost",
+          type: "text",
+          label: out.global.i18n.t("carCost"),
+          convert: "float",
+          wrapCSS: "z3-is-small",
+          maskOptions: {
+            mask: Number,
+            min: 0,
+            max: 99999999,
+            thousandsSeparator: ".",
+            lazy: true
+          }
+        },
+        {
           id: "creditSum",
           type: "text",
           label: out.global.i18n.t("creditSum"),
