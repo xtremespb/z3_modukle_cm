@@ -32,7 +32,7 @@ $ const common = out.global.common;
           id: "cardType",
           type: "select",
           label: out.global.i18n.t("cardType"),
-          options: [{ value: 0, label: "–" }, ...holdingData.cards.map((c, i) => ({ value: i + 1, label: c.id.toUpperCase() }))],
+          options: [{ value: 0, label: "–" }, ...holdingData.cards.map((c, i) => ({ value: i + 1, label: c.id === "legacy" && out.global.legacy.alias ? out.global.legacy.alias : c.id.toUpperCase() }))],
           defaultValue: "0",
           css: "is-fullwidth",
           wrapCSS: "z3-is-medium",
@@ -364,7 +364,7 @@ $ const common = out.global.common;
         tooltip: false
       }
     ] actionsTitle=out.global.i18n.t("actions") processValue=state.processValue sortId="date" sortDirection="desc" checkboxColumn=false on-action-click("onActionClick") on-top-button-click("onTopButtonClick") i18n=out.global.i18n on-unauthorized("onUnauthorized") autoItemsPerPage=true/>
-    <mnotify key=`cmList_mnotify`/>
+    <mnotify key="cmList_mnotify"/>
   </div>
 </if>
 <mnotify key=`cardForm_mnotify`/>

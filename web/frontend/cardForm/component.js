@@ -129,7 +129,7 @@ module.exports = class {
 
     setPercentagePriceValue() {
         let percentagePriceValue = "";
-        if (this.currentCardLabel === "LEGACY") {
+        if (this.currentCardLabel === "LEGACY" || this.currentCardLabel === this.state.legacy.alias) {
             if (this.state.legacy.manualPrice && this.creditSum && this.creditMonths) {
                 percentagePriceValue = this.calculatePercentage();
             }
@@ -146,27 +146,27 @@ module.exports = class {
         case "cardType":
             if (this.state.legacy.manualPrice) {
                 this.cardForm.func.setItemData("price", {
-                    helpText: this.i18n.t(obj.value === "0" ? "priceHelpText" : "legacyCostHelpText")
+                    helpText: this.i18n.t(obj.value === "0" ? "priceHelpText" : this.state.legacy.alias || "legacyCostHelpText")
                 });
             }
-            this.cardForm.func.setFieldVisible("cardNumber", obj.label !== "LEGACY");
-            this.cardForm.func.setFieldMandatory("creditMonths", obj.label === "LEGACY");
-            this.cardForm.func.setFieldMandatory("cardNumber", obj.label !== "LEGACY");
+            this.cardForm.func.setFieldVisible("cardNumber", obj.label !== "LEGACY" && obj.label !== this.state.legacy.alias);
+            this.cardForm.func.setFieldMandatory("creditMonths", obj.label === "LEGACY" || obj.label === this.state.legacy.alias);
+            this.cardForm.func.setFieldMandatory("cardNumber", obj.label !== "LEGACY" && obj.label !== this.state.legacy.alias);
             if (!this.state.legacy.manualPrice) {
-                this.cardForm.func.setFieldMandatory("price", obj.label !== "LEGACY");
-                this.cardForm.func.setFieldVisible("creditPercentage", obj.label === "LEGACY");
-                this.cardForm.func.setFieldVisible("price", obj.label !== "LEGACY");
+                this.cardForm.func.setFieldMandatory("price", obj.label !== "LEGACY" && obj.label !== this.state.legacy.alias);
+                this.cardForm.func.setFieldVisible("creditPercentage", obj.label === "LEGACY" || obj.label === this.state.legacy.alias);
+                this.cardForm.func.setFieldVisible("price", obj.label !== "LEGACY" && obj.label !== this.state.legacy.alias);
                 this.cardForm.func.setFieldVisible("creditPercentageInfo", false);
             } else {
-                this.cardForm.func.setFieldVisible("creditPercentageInfo", obj.label === "LEGACY");
+                this.cardForm.func.setFieldVisible("creditPercentageInfo", obj.label === "LEGACY" || obj.label === this.state.legacy.alias);
                 this.cardForm.func.setFieldVisible("creditPercentage", false);
             }
             this.cardForm.func.setFieldMandatory("years", obj.label.match(/FOX/));
             this.cardForm.func.setFieldVisible("years", obj.label.match(/FOX/));
-            this.cardForm.func.setFieldVisible("creditSum", obj.label === "LEGACY");
-            this.cardForm.func.setFieldVisible("first10", obj.label === "LEGACY" && this.state.legacy.first10);
-            this.cardForm.func.setFieldVisible("creditMonths", obj.label === "LEGACY");
-            if (this.state.legacy.noCredit && obj.label === "LEGACY") {
+            this.cardForm.func.setFieldVisible("creditSum", obj.label === "LEGACY" || obj.label === this.state.legacy.alias);
+            this.cardForm.func.setFieldVisible("first10", (obj.label === "LEGACY" || obj.label === this.state.legacy.alias) && this.state.legacy.first10);
+            this.cardForm.func.setFieldVisible("creditMonths", obj.label === "LEGACY" || obj.label === this.state.legacy.alias);
+            if (this.state.legacy.noCredit && (obj.label === "LEGACY" || obj.label === this.state.legacy.alias)) {
                 this.cardForm.func.setFieldVisible("creditSum", false);
                 this.cardForm.func.setFieldVisible("creditMonths", false);
                 this.cardForm.func.setFieldMandatory("creditSum", false);
@@ -203,7 +203,7 @@ module.exports = class {
             this.setPercentagePriceValue();
             break;
         }
-        if (this.currentCardLabel === "LEGACY" && ((this.creditSum && this.creditMonths) || (this.state.legacy.noCredit && this.price))) {
+        if ((this.currentCardLabel === "LEGACY" || this.currentCardLabel === this.state.legacy.alias) && ((this.creditSum && this.creditMonths) || (this.state.legacy.noCredit && this.price))) {
             const {
                 creditSum,
                 creditMonths,
