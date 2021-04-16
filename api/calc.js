@@ -3,7 +3,7 @@ import Cyr from "./cyr";
 const cyr = new Cyr();
 
 export default {
-    legacy: (rangesData, componentsData, sum, months, percentage, price, first10 = false) => {
+    legacy: (rangesData, componentsData, sum, months, percentage, price, first10 = false, addFreeComponents = false) => {
         const creditSum = parseFloat(sum);
         const creditMonths = parseFloat(months);
         const creditPercentage = parseFloat(percentage);
@@ -18,6 +18,12 @@ export default {
             }
         });
         componentsArray = componentsArray || [];
+        const missingComponents = [];
+        componentsData.map((c, i) => {
+            if (componentsArray.indexOf(i + 1) === -1) {
+                missingComponents.push(i + 1);
+            }
+        });
         let selectedComponentsCost = 0;
         componentsArray.map((c, i) => {
             const {
@@ -65,6 +71,19 @@ export default {
             annexData = {};
         } else {
             productCost = cyr.formatMoney(productCost, 2);
+        }
+        if (missingComponents.length && addFreeComponents && productCost <= addFreeComponents) {
+            missingComponents.filter(c => c !== 9 && c !== 10).map(c => {
+                const formula = componentsData[c - 1].formula || null;
+                const item = {
+                    title: componentsData[c - 1].title,
+                    amount: c === 2 ? options + 1 : componentsData[c - 1].amount,
+                    cost: 0
+                };
+                if (formula !== "guard" && formula !== "office") {
+                    components.push(item);
+                }
+            });
         }
         return {
             productCost,

@@ -211,7 +211,7 @@ module.exports = class {
             } = this;
             const price = this.state.legacy.manualPrice ? this.cardForm.func.getValue("price") : null;
             const percentage = this.creditPercentage || this.cardForm.func.getValue("creditPercentage");
-            const data = calc.legacy(this.state.legacy.ranges, this.state.legacy.components, creditSum, creditMonths, percentage, price, first10);
+            const data = calc.legacy(this.state.legacy.ranges, this.state.legacy.components, creditSum, creditMonths, percentage, price, first10, this.state.legacy.minFreeComponentsCost);
             this.state.calcLegacy = data;
         } else {
             this.state.calcLegacy = null;
