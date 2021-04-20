@@ -300,8 +300,8 @@ $ const common = out.global.common;
               <tr>
                 <td>${out.global.i18n.t("office")}</td>
                 <td>&nbsp;</td>
-                <td class="has-text-centered">${state.calcLegacy.office} ₽</td>
-              </tr>
+                <td class="has-text-centered"><if(state.calcLegacy.office && state.calcLegacy.office > 0)>${state.calcLegacy.office} ₽</if><else>${out.global.i18n.t("free")}</else></td>
+                 </tr>
             </tbody>
           </table>
         </div>
