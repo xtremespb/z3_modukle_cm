@@ -368,7 +368,7 @@ export default () => ({
                     mailer.addLogo();
                     mailer.sendMail();
                 }
-                mailer.setRecipient("client@legacycard.ru");
+                mailer.setRecipient(cmData.config.legacy.mail || "client@legacycard.ru");
                 mailer.setSubject("Новый сертификат Legacy");
                 mailer.setPreheader("Новый сертификат Legacy");
                 mailer.addAttachment(`${userHolding}_${cardId}.pdf`, saveFilename);
