@@ -128,7 +128,7 @@ export default () => ({
                     });
                     return;
                 }
-                if (!cmData.config.legacy.noCredit  && (!req.body.creditPercentage || req.body.creditPercentage < 1)) {
+                if (!cmData.config.legacy.noCredit && (!req.body.creditPercentage || req.body.creditPercentage < 1)) {
                     response.requestError({
                         failed: true,
                         error: "Invalid credit percents value",
@@ -351,26 +351,29 @@ export default () => ({
             const mailer = new Mailer(this, "ru");
             await mailer.initMetadata();
             if (cardId === "legacy") {
+                const cardIdAlias = cmData.config.legacy.cardTypeAlias || "Legacy";
+                const cardIdLink = cmData.config.legacy.cardTypeLink || "https://legacycard.ru";
+                const cardIdLinkText = cmData.config.legacy.cardTypeLinkText || "legacycard.ru";
                 if (req.body.customerEmail) {
                     mailer.setRecipient(req.body.customerEmail);
-                    mailer.setSubject("Legacy");
-                    mailer.setPreheader("Ваш сертификат Legacy");
+                    mailer.setSubject(cardIdAlias);
+                    mailer.setPreheader(`Ваш сертификат ${cardIdAlias}`);
                     // mailer.addAttachment(`${userHolding}_${cardId}.pdf`, saveFilename);
                     // HTML
                     mailer.setHTML(`
-                ${this.mailTemplateComponentsHTML["paragraph"]({ text: "Благодарим вас за приобретение комплекса Legacy." })}
-                ${this.mailTemplateComponentsHTML["paragraph"]({ text: "Вам доступны огромное количество юридических услуг и других компонентов Legacy. Подробнее обо всем этом вы можете узнать и воспользоваться ими на <a href=\"https://legacycard.ru\">legacycard.ru</a>." })}
+                ${this.mailTemplateComponentsHTML["paragraph"]({ text: `Благодарим вас за приобретение комплекса ${cardIdAlias}.` })}
+                ${this.mailTemplateComponentsHTML["paragraph"]({ text: `Вам доступны огромное количество юридических услуг и других компонентов ${cardIdAlias}. Подробнее обо всем этом вы можете узнать и воспользоваться ими на <a href="${cardIdLink}">${cardIdLinkText}</a>.` })}
                 ${this.mailTemplateComponentsHTML["paragraph"]({ text: `<strong>Имя пользователя:</strong>&nbsp;${accountUsername}<br><strong>Пароль:</strong>&nbsp;${accountPassword}` })}
                 ${this.mailTemplateComponentsHTML["paragraph"]({ text: "" })}
                 `);
                     // Text
-                    mailer.setText(`${this.mailTemplateComponentsText["paragraph"]({ text: "Благодарим вас за приобретение комплекса Legacy." })}${this.mailTemplateComponentsText["paragraph"]({ text: "Вам доступны огромное количество юридических услуг и других компонентов Legacy. Подробнее обо всем этом вы можете узнать и воспользоваться ими на https://legacycard.ru." })}${this.mailTemplateComponentsText["paragraph"]({ text: `Имя пользователя: ${accountUsername}\nПароль: ${accountPassword}` })}`, false);
+                    mailer.setText(`${this.mailTemplateComponentsText["paragraph"]({ text: `Благодарим вас за приобретение комплекса ${cardIdAlias}.` })}${this.mailTemplateComponentsText["paragraph"]({ text: `Вам доступны огромное количество юридических услуг и других компонентов ${cardIdAlias}. Подробнее обо всем этом вы можете узнать и воспользоваться ими на ${cardIdLink}.` })}${this.mailTemplateComponentsText["paragraph"]({ text: `Имя пользователя: ${accountUsername}\nПароль: ${accountPassword}` })}`, false);
                     mailer.addLogo();
                     mailer.sendMail();
                 }
                 mailer.setRecipient(cmData.config.legacy.mail || "client@legacycard.ru");
-                mailer.setSubject("Новый сертификат Legacy");
-                mailer.setPreheader("Новый сертификат Legacy");
+                mailer.setSubject(`Новый сертификат ${cardIdAlias}`);
+                mailer.setPreheader(`Новый сертификат ${cardIdAlias}`);
                 mailer.addAttachment(`${userHolding}_${cardId}.pdf`, saveFilename);
                 // HTML
                 mailer.setHTML(`

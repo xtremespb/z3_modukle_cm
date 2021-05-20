@@ -25,7 +25,11 @@ module.exports = class {
             case "date":
                 return `${new Date(value).toLocaleDateString()} ${new Date(value).toLocaleTimeString()}`;
             case "cardType":
-                return value.toUpperCase();
+                let cardType = value;
+                if (this.state.legacy.cardTypeAlias) {
+                    cardType = cardType.replace(/legacy/, this.state.legacy.cardTypeAlias);
+                }
+                return cardType.toUpperCase();
             default:
                 return value;
             }
