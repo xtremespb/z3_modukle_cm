@@ -44,6 +44,8 @@ $ const token = cookies.get(`${out.global.siteId || "zoia3"}.authToken`);
 						aceOptions: {
 							mode: "ace/mode/text"
 						},
+						wysiwyg: false,
+						source: true,
 						toggle: false
 					}
 				]
@@ -62,7 +64,7 @@ $ const token = cookies.get(`${out.global.siteId || "zoia3"}.authToken`);
 				${out.global.i18n.t("btnConfirmGeneric")}
 			</button>
 			<if(!state.loading)>
-				<button class="button" on-click("onCloseClick")>
+				<button class="button is-dialog-secondary" on-click("onCloseClick")>
 					${out.global.i18n.t("btnCancelGeneric")}
 				</button>
 			</if>
