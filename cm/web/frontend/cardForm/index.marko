@@ -221,6 +221,36 @@ $ const common = out.global.common;
 						emptyNull: true
 					},
 					{
+						id: "creditStartDate",
+						type: "text",
+						label: out.global.i18n.t("creditStartDate"),
+						helpText: out.global.i18n.t("creditStartDateHelpText"),
+						wrapCSS: "z3-is-small",
+						mandatory: false,
+						placeholder: "__.__.____",
+						maskOptions: {
+							mask: Date,
+							min: new Date(1900, 0, 1),
+							max: new Date(2049, 0, 1),
+							lazy: true
+						}
+					},
+					{
+						id: "creditEndDate",
+						type: "text",
+						label: out.global.i18n.t("creditEndDate"),
+						helpText: out.global.i18n.t("creditEndDateHelpText"),
+						wrapCSS: "z3-is-small",
+						mandatory: false,
+						placeholder: "__.__.____",
+						maskOptions: {
+							mask: Date,
+							min: new Date(1900, 0, 1),
+							max: new Date(2049, 0, 1),
+							lazy: true
+						}
+					},
+					{
 						id: "creditPercentage",
 						type: "range",
 						convert: "integer",
@@ -244,7 +274,14 @@ $ const common = out.global.common;
 						label: out.global.i18n.t("labelFirst10"),
 						labelCheckbox: out.global.i18n.t("checkboxFirst10"),
 						style: "margin-top:10px"
-					}
+					},
+					{
+						id: "vin",
+						type: "text",
+						label: out.global.i18n.t("vin"),
+						wrapCSS: "z3-is-medium",
+						mandatory: true
+					},
 				],
 				{
 					id: "div1",

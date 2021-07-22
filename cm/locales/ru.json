@@ -87,5 +87,10 @@
     "checkboxFirst10": "Более 10%",
     "printTechService": "Сертификат тех. помощи",
     "carCost": "Стоимость авто",
-    "free": "Бесплатно"
+    "free": "Бесплатно",
+    "creditStartDate": "Срок начала",
+    "creditEndDate": "Срок окончания",
+    "creditStartDateHelpText": "Срок начала действия сертификата, ДД.ММ.ГГГГ",
+    "creditEndDateHelpText": "Срок окончания действия сертификата, ДД.ММ.ГГГГ",
+    "vin": "VIN"
 }

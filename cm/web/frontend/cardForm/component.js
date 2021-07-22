@@ -68,24 +68,31 @@ module.exports = class {
         this.cardForm.func.submitForm(true);
     }
 
+    resetFieldVisibility() {
+        this.cardForm = this.getComponent("z3_cm_cardForm");
+        this.cardForm.func.setFieldMandatory("creditMonths", false);
+        this.cardForm.func.setFieldMandatory("cardNumber", true);
+        this.cardForm.func.setFieldMandatory("price", true);
+        this.cardForm.func.setFieldMandatory("carCost", false);
+        this.cardForm.func.setFieldVisible("years", false);
+        this.cardForm.func.setFieldVisible("creditSum", false);
+        this.cardForm.func.setFieldVisible("first10", false);
+        this.cardForm.func.setFieldVisible("creditMonths", false);
+        this.cardForm.func.setFieldVisible("creditPercentage", false);
+        this.cardForm.func.setFieldVisible("creditPercentageInfo", false);
+        this.cardForm.func.setFieldVisible("carCost", false);
+        this.cardForm.func.setFieldVisible("creditStartDate", false);
+        this.cardForm.func.setFieldVisible("creditEndDate", false);
+        this.cardForm.func.setFieldVisible("vin", false);
+    }
+
     onButtonClick(data) {
         switch (data.id) {
         case "btnReset":
             this.cardForm.func.resetData();
             this.state.calcLegacy = null;
             this.state.title = null;
-            this.cardForm.func.setFieldVisible("price", true);
-            this.cardForm.func.setFieldVisible("cardNumber", true);
-            this.cardForm.func.setFieldMandatory("creditMonths", false);
-            this.cardForm.func.setFieldMandatory("cardNumber", true);
-            this.cardForm.func.setFieldMandatory("price", true);
-            this.cardForm.func.setFieldMandatory("years", false);
-            this.cardForm.func.setFieldVisible("years", false);
-            this.cardForm.func.setFieldVisible("creditSum", false);
-            this.cardForm.func.setFieldVisible("first10", false);
-            this.cardForm.func.setFieldVisible("creditMonths", false);
-            this.cardForm.func.setFieldVisible("creditPercentage", false);
-            this.cardForm.func.setFieldVisible("creditPercentageInfo", false);
+            this.resetFieldVisibility();
             setTimeout(() => this.cardForm.func.autoFocus(), 1);
             break;
         case "btnPrintOffer":
@@ -178,6 +185,26 @@ module.exports = class {
                 this.cardForm.func.setFieldVisible("carCost", true);
                 this.cardForm.func.setFieldMandatory("carCost", true);
             }
+            if (this.state.legacy.certValidityDates && (obj.label === "LEGACY" || obj.label === this.state.legacy.alias)) {
+                this.cardForm.func.setFieldVisible("creditMonths", false);
+                this.cardForm.func.setFieldMandatory("creditMonths", false);
+                this.cardForm.func.setFieldVisible("creditStartDate", true);
+                this.cardForm.func.setFieldMandatory("creditStartDate", true);
+                this.cardForm.func.setFieldVisible("creditEndDate", true);
+                this.cardForm.func.setFieldMandatory("creditEndDate", true);
+            }
+            if (this.state.legacy.hideCreditSum && (obj.label === "LEGACY" || obj.label === this.state.legacy.alias)) {
+                this.cardForm.func.setFieldVisible("creditSum", false);
+                this.cardForm.func.setFieldMandatory("creditSum", false);
+            }
+            if (this.state.legacy.hideCreditPercentageInfo && (obj.label === "LEGACY" || obj.label === this.state.legacy.alias)) {
+                this.cardForm.func.setFieldVisible("creditPercentageInfo", false);
+                this.cardForm.func.setFieldMandatory("creditPercentageInfo", false);
+            }
+            if (this.state.legacy.showVIN && (obj.label === "LEGACY" || obj.label === this.state.legacy.alias)) {
+                this.cardForm.func.setFieldVisible("vin", true);
+                this.cardForm.func.setFieldMandatory("vin", false);
+            }
             this.currentCardLabel = obj.label;
             break;
         case "creditSum":
@@ -207,7 +234,7 @@ module.exports = class {
             this.setPercentagePriceValue();
             break;
         }
-        if ((this.currentCardLabel === "LEGACY" || this.currentCardLabel === this.state.legacy.alias) && ((this.creditSum && this.creditMonths) || (this.state.legacy.noCredit && this.price))) {
+        if ((this.currentCardLabel === "LEGACY" || this.currentCardLabel === this.state.legacy.alias) && ((this.creditSum && this.creditMonths) || ((this.state.legacy.noCredit || this.state.legacy.hideCreditSum) && this.price))) {
             const {
                 creditSum,
                 creditMonths,
@@ -223,18 +250,7 @@ module.exports = class {
     }
 
     onFormSettled() {
-        this.cardForm = this.getComponent("z3_cm_cardForm");
-        this.cardForm.func.setFieldMandatory("creditMonths", false);
-        this.cardForm.func.setFieldMandatory("cardNumber", true);
-        this.cardForm.func.setFieldMandatory("price", true);
-        this.cardForm.func.setFieldMandatory("carCost", false);
-        this.cardForm.func.setFieldVisible("years", false);
-        this.cardForm.func.setFieldVisible("creditSum", false);
-        this.cardForm.func.setFieldVisible("first10", false);
-        this.cardForm.func.setFieldVisible("creditMonths", false);
-        this.cardForm.func.setFieldVisible("creditPercentage", false);
-        this.cardForm.func.setFieldVisible("creditPercentageInfo", false);
-        this.cardForm.func.setFieldVisible("carCost", false);
+        this.resetFieldVisibility();
     }
 
     onTabClick(e) {

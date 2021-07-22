@@ -59,6 +59,21 @@
             },
             "first10": {
                 "type": ["boolean", "null"]
+            },
+            "creditStartDate": {
+                "type": ["string", "null"],
+                "minLength": 10,
+                "maxLength": 10
+            },
+            "creditEndDate": {
+                "type": ["string", "null"],
+                "minLength": 10,
+                "maxLength": 10
+            },
+            "vin": {
+                "type": ["string", "null"],
+                "minLength": 17,
+                "maxLength": 17
             }
         },
         "required": ["cardNumber", "cardType", "room", "customerName", "customerBirthDate", "customerPhone", "customerEmail", "customerAddress", "date", "price"]
