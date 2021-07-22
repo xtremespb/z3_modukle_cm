@@ -34,7 +34,7 @@ export default () => ({
             };
             const result = await this.mongo.db.collection(req.zoiaModulesConfig["cm"].collectionCmCodes).deleteMany(query);
             // Check result
-            if (!result || !result.result || !result.result.ok) {
+            if (!result || !result.acknowledged) {
                 response.requestError({
                     failed: true,
                     error: "Could not delete one or more items",
