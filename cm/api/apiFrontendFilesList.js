@@ -1,5 +1,5 @@
 import {
-    ObjectID
+    ObjectId
 } from "mongodb";
 import filesList from "./data/filesList.json";
 
@@ -31,7 +31,7 @@ export default () => ({
                 projection: filesList.projection
             };
             const query = {
-                username: new ObjectID(auth.getUser()._id)
+                username: ObjectId(auth.getUser()._id)
             };
             if (req.body.searchText && req.body.searchText.length > 1) {
                 query.$or = filesList.search.map(c => {
