@@ -364,10 +364,9 @@ export default () => ({
                     // mailer.addAttachment(`${userHolding}_${cardId}.pdf`, saveFilename);
                     // HTML
                     mailer.setHTML(`
-                ${this.mailTemplateComponentsHTML["paragraph"]({ text: `Благодарим вас за приобретение комплекса ${cardIdAlias}.` })}
-                ${this.mailTemplateComponentsHTML["paragraph"]({ text: `Вам доступны огромное количество юридических услуг и других компонентов ${cardIdAlias}. Подробнее обо всем этом вы можете узнать и воспользоваться ими на <a href="${cardIdLink}">${cardIdLinkText}</a>.` })}
-                ${this.mailTemplateComponentsHTML["paragraph"]({ text: `<strong>Имя пользователя:</strong>&nbsp;${accountUsername}<br><strong>Пароль:</strong>&nbsp;${accountPassword}` })}
-                ${this.mailTemplateComponentsHTML["paragraph"]({ text: "" })}
+                ${this.mailTemplateComponentsHTML["paragraph"]({ text: `Благодарим вас за приобретение комплекса ${cardIdAlias}.`, style: "" })}
+                ${this.mailTemplateComponentsHTML["paragraph"]({ text: `Вам доступны огромное количество юридических услуг и других компонентов ${cardIdAlias}. Подробнее обо всем этом вы можете узнать и воспользоваться ими на <a href="${cardIdLink}">${cardIdLinkText}</a>.`, style: "" })}
+                ${this.mailTemplateComponentsHTML["paragraph"]({ text: `<strong>Имя пользователя:</strong>&nbsp;${accountUsername}<br><strong>Пароль:</strong>&nbsp;${accountPassword}`, style: "" })}
                 `);
                     // Text
                     mailer.setText(`${this.mailTemplateComponentsText["paragraph"]({ text: `Благодарим вас за приобретение комплекса ${cardIdAlias}.` })}${this.mailTemplateComponentsText["paragraph"]({ text: `Вам доступны огромное количество юридических услуг и других компонентов ${cardIdAlias}. Подробнее обо всем этом вы можете узнать и воспользоваться ими на ${cardIdLink}.` })}${this.mailTemplateComponentsText["paragraph"]({ text: `Имя пользователя: ${accountUsername}\nПароль: ${accountPassword}` })}`, false);
@@ -380,9 +379,8 @@ export default () => ({
                 mailer.addAttachment(`${userHolding}_${cardId}.pdf`, saveFilename);
                 // HTML
                 mailer.setHTML(`
-                ${this.mailTemplateComponentsHTML["paragraph"]({ text: "На сайте был выписан новый сертификат." })}
-                ${this.mailTemplateComponentsHTML["paragraph"]({ text: `<strong>Имя пользователя:</strong>&nbsp;${accountUsername}<br><strong>Пароль:</strong>&nbsp;${accountPassword}` })}
-                ${this.mailTemplateComponentsHTML["paragraph"]({ text: "" })}
+                ${this.mailTemplateComponentsHTML["paragraph"]({ text: "На сайте был выписан новый сертификат.", style: "" })}
+                ${this.mailTemplateComponentsHTML["paragraph"]({ text: `<strong>Имя пользователя:</strong>&nbsp;${accountUsername}<br><strong>Пароль:</strong>&nbsp;${accountPassword}`, style: "" })}
                 `);
                 // Text
                 mailer.setText(`${this.mailTemplateComponentsText["paragraph"]({ text: "На сайте был выписан новый сертификат." })}${this.mailTemplateComponentsText["paragraph"]({ text: `Имя пользователя: ${accountUsername}\nПароль: ${accountPassword}` })}`, false);
