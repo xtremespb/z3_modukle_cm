@@ -10,6 +10,11 @@
 				<span>${out.global.i18n.t("tabCodes")}</span>
 			</a>
 		</li>
+		<li class=(state.tab === "stats" ? "is-active" : "")>
+			<a on-click("onTabClick") data-id="stats">
+				<span>${out.global.i18n.t("tabStats")}</span>
+			</a>
+		</li>
 		<li class=(state.tab === "config" ? "is-active" : "")>
 			<a on-click("onTabClick") data-id="config">
 				<span>${out.global.i18n.t("tabConfig")}</span>
@@ -32,4 +37,7 @@
 </if>
 <if(state.tab === "files")>
 	<cmFiles/>
+</if>
+<if(state.tab === "stats")>
+	<cmStats/>
 </if>

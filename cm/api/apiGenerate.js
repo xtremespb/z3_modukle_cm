@@ -82,6 +82,7 @@ export default () => ({
             const years = (req.body.years ? parseInt(req.body.years, 10) : 1) || 1;
             const months = (req.body.creditMonths ? parseInt(req.body.creditMonths, 10) : 1) || 1;
             const price = cardId.match(/^fox/) ? parseInt(req.body.price * years, 10) : parseInt(req.body.price, 10);
+            const holdingTitle = cmData.config.holdings[userHolding].title;
             let components = [];
             let componentsOfficeCost;
             let componentsTotalCost;
@@ -90,6 +91,7 @@ export default () => ({
             let {
                 cardNumber
             } = req.body;
+            let certIndex = 0;
             // Check legacy fields
             if (cardId === "legacy") {
                 if (!cmData.config.legacy.hideCreditSum && !cmData.config.legacy.noCredit && (!req.body.creditMonths || months < 1)) {
@@ -169,6 +171,7 @@ export default () => ({
                     return;
                 }
                 cardNumber = `00${counterData.value.value}`;
+                certIndex = parseInt(counterData.value.value, 10)
             } else {
                 // Check non-legacy fields
                 if (!req.body.cardNumber || req.body.cardNumber < cmData.config.minCardNumber || req.body.cardNumber > cmData.config.maxCardNumber) {
@@ -230,6 +233,7 @@ export default () => ({
             }
             const usernameHId = holdingData.id;
             const usernameRId = cmData.config.holdings[userHolding].roomsId[req.body.room - 1];
+            const roomName = cmData.config.holdings[userHolding].rooms[req.body.room - 1];
             const accountUsername = `L${usernameLetter1}${usernameLetter2}${usernameHId}${usernameRId}${cardNumber}`;
             const accountPassword = `PC${parseInt(cardNumber, 10)}`;
             let serviceCodeAutoSchool = "—";
@@ -310,6 +314,18 @@ export default () => ({
             }, {
                 upsert: true
             });
+            await this.mongo.db.collection(req.zoiaModulesConfig["cm"].collectionCmStats).insertOne({
+                certIndex,
+                cardNumber,
+                holdingTitle,
+                roomName,
+                date: new Date(),
+                endDate: req.body.creditEndDate,
+                cost: componentsTotalCost,
+                customerName: req.body.customerName,
+                customerAddress: req.body.customerAddress,
+                vin: typeof req.body.vin === "string" ? req.body.vin.toUpperCase() : null,
+            });
             let uidAnnex;
             if (Object.keys(annexData).length && cardId === "legacy") {
                 templateAnnexDoc.setData(annexData);
@@ -350,6 +366,29 @@ export default () => ({
                 }, {
                     upsert: true
                 });
+                if (cmData.config.legacy.techService) {
+                    const techServicePath = path.resolve(`${__dirname}/../../${req.zoiaConfig.directories.files}/${req.zoiaModulesConfig["cm"].directoryTemplates}/tech_service.pdf`);
+                    const uidTechService = uuid();
+                    const saveTechServiceFilename = path.resolve(`${__dirname}/../../${req.zoiaConfig.directories.files}/${req.zoiaModulesConfig["cm"].directoryFiles}/${uidTechService}`);
+                    const statsTechService = await fs.lstat(techServicePath);
+                    await fs.copy(techServicePath, saveTechServiceFilename);
+                    await this.mongo.db.collection(req.zoiaModulesConfig["cm"].collectionCmFiles).updateOne({
+                        _id: uidTechService
+                    }, {
+                        $set: {
+                            name: `${userHolding}_${cardId}_${moment().format("DDMMYYYY_HHmm")}_tech_service.pdf`,
+                            size: statsTechService.size,
+                            date: new Date(),
+                            cardNumber,
+                            customerName: req.body.customerName,
+                            holding: userHolding,
+                            cardType: `${cardId} (тех. сертификат)`,
+                            username: auth.getUser()._id
+                        }
+                    }, {
+                        upsert: true
+                    });
+                }
             }
             const mailer = new Mailer(this, "ru");
             await mailer.initMetadata();

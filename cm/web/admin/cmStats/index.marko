@@ -1,0 +1,41 @@
+import configStats from "../../../api/data/stats.json"
+
+<mform
+	key="statsExportForm"
+	id="statsExportForm"
+	fields=[
+		[{
+			id: "dateFrom",
+			type: "datepicker",
+			label: out.global.i18n.t("dateFrom"),
+			wrapCSS: "z3-is-small"
+		}, {
+			id: "dateTo",
+			type: "datepicker",
+			label: out.global.i18n.t("dateTo"),
+			wrapCSS: "z3-is-small"
+		}],
+		{
+			id: "div1",
+			type: "divider"
+		},
+		{
+			id: "bg1",
+			type: "buttons",
+			data: [
+				{
+					id: "btnSave",
+					type: "button",
+					buttonType: "submit",
+					label: out.global.i18n.t("btnExportStats"),
+					css: "is-primary"
+				}
+			]
+		}
+	]
+	formType="formData"
+	validation=configStats
+	progressButtonId="btnSave"
+	i18n=out.global.i18n
+	on-button-click("onButtonClick")/>
+<mnotify key="statsExport_mnotify"/>

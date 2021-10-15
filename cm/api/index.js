@@ -6,6 +6,7 @@ import apiFilesDelete from "./apiFilesDelete";
 import apiCodesList from "./apiCodesList";
 import apiCodesDelete from "./apiCodesDelete";
 import apiImportCodes from "./apiImportCodes";
+import apiStatsExport from "./apiStatsExport";
 import apiFrontendFilesList from "./apiFrontendFilesList";
 
 export default fastify => {
@@ -17,5 +18,6 @@ export default fastify => {
     fastify.post("/api/cm/codes/list", apiCodesList());
     fastify.post("/api/cm/codes/delete", apiCodesDelete());
     fastify.post("/api/cm/codes/import", apiImportCodes());
+    fastify.post("/api/cm/stats/export", apiStatsExport());
     fastify.post("/api/cm/frontend/files/list", apiFrontendFilesList());
 };

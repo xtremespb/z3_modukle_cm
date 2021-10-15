@@ -27,7 +27,11 @@ export default () => ({
                 sort: {},
                 projection: filesList.projection
             };
-            const query = {};
+            const query = {
+                hidden: {
+                    $ne: true
+                },
+            };
             if (req.body.searchText && req.body.searchText.length > 1) {
                 query.$or = filesList.search.map(c => {
                     const sr = {};

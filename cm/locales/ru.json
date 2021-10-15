@@ -92,5 +92,10 @@
     "creditEndDate": "Срок окончания",
     "creditStartDateHelpText": "Срок начала действия сертификата, ДД.ММ.ГГГГ",
     "creditEndDateHelpText": "Срок окончания действия сертификата, ДД.ММ.ГГГГ",
-    "vin": "VIN"
+    "vin": "VIN",
+    "tabStats": "Статистика",
+    "dateFrom": "От",
+    "dateTo": "До",
+    "exportError": "Ошибка во время экспорта данных",
+    "btnExportStats": "Выгрузить отчет"
 }

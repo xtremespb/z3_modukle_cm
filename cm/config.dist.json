@@ -1,11 +1,16 @@
 {
     "collectionCmFiles": "cmFiles",
     "collectionCmCodes": "cmCodes",
+    "collectionCmStats": "cmStats",
     "database": {
         "collections": {
             "cmFiles": {
-                "indexesAsc": ["name", "name"],
-                "indexesDesc": ["date", "date"]
+                "indexesAsc": ["name", "date"],
+                "indexesDesc": ["name", "date"]
+            },
+            "cmStats": {
+                "indexesAsc": ["date"],
+                "indexesDesc": ["date"]
             },
             "cmCodes": {
                 "indexesAsc": ["code", "codeType"],
