@@ -7,7 +7,7 @@ style.scss {
 $ const cookies = new Cookies(out.global.cookieOptions);
 $ const token = cookies.get(`${out.global.siteId || "zoia3"}.authToken`);
 <mtable
-	css="table is-bordered is-striped is-hoverable is-fullwidth"
+	css="is-fullwidth"
 	dataSource={
 		method: "post",
 		url: "/api/cm/codes/list",
