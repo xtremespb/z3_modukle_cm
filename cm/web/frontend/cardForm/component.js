@@ -1,3 +1,6 @@
+const {
+    v4: uuidv4
+} = require("uuid");
 const calc = require("../../../api/calc").default;
 
 module.exports = class {
@@ -96,14 +99,14 @@ module.exports = class {
             setTimeout(() => this.cardForm.func.autoFocus(), 1);
             break;
         case "btnPrintOffer":
-            const winOffer = window.open(`/files/offer${this.first10 ? "_first10" : ""}.pdf`, "_blank");
+            const winOffer = window.open(`/cm/pdf?type=${this.first10 ? "first10" : "offer"}&r=${uuidv4()}`, "_blank");
             winOffer.focus();
-            winOffer.print();
+            // winOffer.print();
             break;
         case "btnPrintTechService":
-            const winTech = window.open(`/files/tech_service.pdf`, "_blank");
+            const winTech = window.open(`/cm/pdf?type=tech&r=${uuidv4()}`, "_blank");
             winTech.focus();
-            winTech.print();
+            // winTech.print();
             break;
         }
     }

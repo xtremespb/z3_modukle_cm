@@ -21,6 +21,7 @@
     "routes": {
         "cm": "/admin/cm",
         "download": "/cm/download",
+        "staticDownload": "/cm/pdf",
         "frontend": "/cm"
     },
     "directoryTemplates": "cm/templates",
